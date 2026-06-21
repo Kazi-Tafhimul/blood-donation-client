@@ -16,7 +16,7 @@ export default function Hero() {
           
           <div className="inline-flex items-center gap-1.5 rounded-full bg-red-50 px-3 py-1 text-xs font-semibold text-[#D62828] dark:bg-red-950/30 dark:text-red-400 border border-red-100/50 dark:border-red-900/30">
             <Heart className="h-3.5 w-3.5 fill-current" />
-            <span>Bangladesh &apos s #1 Blood Donation Platform</span>
+            <span>Bangladesh&apos;s #1 Blood Donation Platform</span>
           </div>
 
          
@@ -28,7 +28,7 @@ export default function Hero() {
           
           <p className="mt-2 text-lg text-zinc-600 dark:text-zinc-400 font-medium leading-relaxed max-w-2xl">
             BloodLink connects voluntary blood donors with patients in critical need. 
-            Every donation is a chance to be someone &apos s hero — join our growing community.
+            Every donation is a chance to be someone&apos;s hero — join our growing community.
           </p>
 
          
