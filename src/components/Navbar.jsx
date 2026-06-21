@@ -17,14 +17,14 @@ export default function Navbar({ session = null, onLogout }) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const pathname = usePathname();
 
-  // Helper to determine active link status
+  
   const isActive = (path) => pathname === path;
 
   return (
     <nav className="sticky top-0 z-40 w-full border-b border-zinc-200 dark:border-zinc-800 bg-white/70 dark:bg-zinc-950/70 backdrop-blur-lg">
       <header className="mx-auto flex h-16 max-w-7xl items-center justify-between px-6">
         
-        {/* Left Side: Mobile Menu Button & Brand Identity */}
+       
         <div className="flex items-center gap-4">
           <button
             className="md:hidden text-zinc-600 dark:text-zinc-300 hover:text-[#E11D48] p-1"
@@ -57,7 +57,7 @@ export default function Navbar({ session = null, onLogout }) {
             </svg>
           </button>
           
-          {/* BloodLink Branding Logo block */}
+         
           <Link href="/" className="flex items-center gap-2 cursor-pointer select-none">
             <div className="bg-[#E11D48] p-2 rounded-full flex items-center justify-center shadow-sm">
               <Droplet className="text-white fill-current h-4 w-4" />
@@ -68,7 +68,7 @@ export default function Navbar({ session = null, onLogout }) {
           </Link>
         </div>
 
-        {/* Center: Desktop Navigation Links (md:flex) */}
+       
         <ul className="hidden items-center gap-6 md:flex">
           <li>
             <Link 
@@ -95,7 +95,7 @@ export default function Navbar({ session = null, onLogout }) {
             </Link>
           </li>
           
-          {/* Conditional Funding Route Link for Active Sessions */}
+        
           {session && (
             <li>
               <Link 
@@ -112,7 +112,7 @@ export default function Navbar({ session = null, onLogout }) {
           )}
         </ul>
 
-        {/* Right Side: Desktop Action Elements Context Toggle */}
+        
         <div className="hidden items-center gap-4 md:flex">
           {!session ? (
             <>
@@ -131,7 +131,7 @@ export default function Navbar({ session = null, onLogout }) {
               </Button>
             </>
           ) : (
-            /* User Dropdown Action Panel */
+           
             <Dropdown placement="bottom-end">
               <DropdownTrigger>
                 <Avatar
@@ -169,7 +169,7 @@ export default function Navbar({ session = null, onLogout }) {
           )}
         </div>
 
-        {/* Mobile View Right-side fallback CTA button wrapper */}
+       
         {!session && (
           <div className="flex items-center md:hidden">
             <Button
@@ -182,7 +182,7 @@ export default function Navbar({ session = null, onLogout }) {
           </div>
         )}
 
-        {/* Mobile View Profile Avatar Fallback Shortcut */}
+       
         {session && (
           <div className="flex items-center md:hidden">
             <Dropdown placement="bottom-end">
@@ -209,7 +209,7 @@ export default function Navbar({ session = null, onLogout }) {
         )}
       </header>
 
-      {/* Mobile Context Overlay Menu Drawer Dropdown */}
+     
       {isMenuOpen && (
         <div className="border-t border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 md:hidden animate-none">
           <ul className="flex flex-col gap-2 p-4">
