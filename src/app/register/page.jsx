@@ -4,6 +4,7 @@ import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { authClient } from "@/lib/auth-client";
 import { Upload, Eye, EyeOff, ChevronDown, Loader2 } from "lucide-react";
+import { RadioGroup, Radio, Description, Label, } from "@heroui/react";
 
 
 import districtsList from "../../data/districts.json";
@@ -18,6 +19,7 @@ export default function Register() {
     upazila: "",
     password: "",
     confirmPassword: "",
+    role: "donor"
   });
 
   const [avatarFile, setAvatarFile] = useState(null);
@@ -94,7 +96,11 @@ export default function Register() {
         email: formData.email,
         password: formData.password,
         name: formData.fullName,
-        image: "", 
+        image: "",
+        role:formData.role,
+        bloodGroup:formData.bloodGroup,
+        district:formData.district,
+        upazila:formData.upazila 
       });
       if (error) {
         alert(error.message || "Registration failed.");
@@ -183,10 +189,10 @@ export default function Register() {
             </div>
           </div>
 
-          {/* Selectors Form Row (Blood, District, Upazila) */}
+         
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
             
-            {/* Blood Group Option Selector */}
+           
             <div className="flex flex-col gap-2 relative">
               <label className="text-[14px] font-bold text-zinc-800">Blood Group</label>
               <div className="relative">
@@ -204,7 +210,7 @@ export default function Register() {
               </div>
             </div>
 
-            {/* Dynamic District Option Selector */}
+         
             <div className="flex flex-col gap-2 relative">
               <label className="text-[14px] font-bold text-zinc-800">District</label>
               <div className="relative">
@@ -224,7 +230,7 @@ export default function Register() {
               </div>
             </div>
 
-            {/* Filtered Upazila Option Selector */}
+            
             <div className="flex flex-col gap-2 relative">
               <label className="text-[14px] font-bold text-zinc-800">Upazila</label>
               <div className="relative">
@@ -246,7 +252,7 @@ export default function Register() {
             </div>
           </div>
 
-          {/* Secure Password Setup Blocks */}
+        
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
             <div className="flex flex-col gap-2 relative">
               <label className="text-[14px] font-bold text-zinc-800">Password</label>
@@ -283,6 +289,36 @@ export default function Register() {
               />
             </div>
           </div>
+         
+<div className="flex flex-col gap-2 mb-4">
+  <label className="text-[14px] font-bold text-zinc-800 dark:text-zinc-200">
+    Register As
+  </label>
+   <RadioGroup defaultValue="premium" name="plan">
+      <Label>Plan selection</Label>
+      <Description>Choose the role that suits you best</Description>
+      <Radio value="donor">
+        <Radio.Content>
+          <Radio.Control>
+            <Radio.Indicator />
+          </Radio.Control>
+          Donor
+        </Radio.Content>
+        
+      </Radio>
+      <Radio value="volunteer">
+        <Radio.Content>
+          <Radio.Control>
+            <Radio.Indicator />
+          </Radio.Control>
+          Volunteer
+          
+        </Radio.Content>
+      
+      </Radio>
+     
+    </RadioGroup>
+</div>
 
           
           <button
