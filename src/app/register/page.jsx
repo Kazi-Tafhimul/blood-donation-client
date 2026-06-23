@@ -3,55 +3,51 @@
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { authClient } from "@/lib/auth-client";
-import { Upload, Eye, EyeOff, ChevronDown, Loader2 } from "lucide-react";
-import { RadioGroup, Radio, Description, Label, } from "@heroui/react";
+import { Upload, Eye, EyeOff, Loader2 } from "lucide-react";
+import { useRouter } from "next/navigation";
 
+// Fully utilizing HeroUI v3 Advanced Form Architecture
+import {
+  Form,
+  Fieldset,
+  TextField,
+  Label,
+  Input,
+  Select,
+  ListBox,
+  Button,
+  RadioGroup,
+  Radio,
+  Description,
+} from "@heroui/react";
 
 import districtsList from "../../data/districts.json";
 import upazilasList from "../../data/upazilas.json";
 
 export default function Register() {
-  const [formData, setFormData] = useState({
-    fullName: "",
-    email: "",
-    bloodGroup: "A+",
-    district: "Dhaka", 
-    upazila: "",
-    password: "",
-    confirmPassword: "",
-    role: "donor"
-  });
-
-  const [avatarFile, setAvatarFile] = useState(null);
-  const [imagePreview, setImagePreview] = useState(null);
+  const router = useRouter();
+  
+  // Track ONLY dynamic dependency states (District -> Upazila mapping) and UI toggles
+  const [selectedDistrict, setSelectedDistrict] = useState("Dhaka");
+  const [filteredUpazilas, setFilteredUpazilas] = useState([]);
   const [showPassword, setShowPassword] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [filteredUpazilas, setFilteredUpazilas] = useState([]);
+  const [imagePreview, setImagePreview] = useState(null);
+  const [avatarFile, setAvatarFile] = useState(null);
 
-  
+  // Re-calculate upazilas whenever the district changes
   useEffect(() => {
-   
     const selectedDistrictObj = districtsList.find(
-      (d) => d.name.toLowerCase() === formData.district.toLowerCase()
+      (d) => d.name.toLowerCase() === selectedDistrict.toLowerCase()
     );
 
     if (selectedDistrictObj) {
-      
       const matches = upazilasList.filter(
         (u) => String(u.district_id) === String(selectedDistrictObj.id)
       );
-      
       setFilteredUpazilas(matches);
-      
-     
-      setFormData((prev) => ({ ...prev, upazila: matches[0] ? matches[0].name : "" }));
     }
-  }, [formData.district]);
-
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
-  };
+  }, [selectedDistrict]);
 
   const handleFileChange = (e) => {
     const file = e.target.files[0];
@@ -61,9 +57,15 @@ export default function Register() {
     }
   };
 
+  // Modern Native Submission Handler (Matching Mentor's Pattern)
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (formData.password !== formData.confirmPassword) {
+    
+    const formDataInstance = new FormData(e.currentTarget);
+    const rawData = Object.fromEntries(formDataInstance.entries());
+
+    // Validate passwords manually matching your business logic
+    if (rawData.password !== rawData.confirmPassword) {
       alert("Passwords do not match!");
       return;
     }
@@ -73,13 +75,12 @@ export default function Register() {
     try {
       let avatarUrl = "";
 
-      // Upload image to ImgBB
+      // Image upload handling
       if (avatarFile) {
         const imgBbFormData = new FormData();
         imgBbFormData.append("image", avatarFile);
 
-        const IMGBB_API_KEY = "YOUR_IMGBB_API_KEY_HERE"; // Replace with your free key
-        
+        const IMGBB_API_KEY = "YOUR_IMGBB_API_KEY_HERE"; 
         const response = await fetch(`https://api.imgbb.com/1/upload?key=${IMGBB_API_KEY}`, {
           method: "POST",
           body: imgBbFormData,
@@ -91,24 +92,25 @@ export default function Register() {
         }
       }
 
-      
+      // Submit formatted data directly to auth client
       const { data, error } = await authClient.signUp.email({
-        email: formData.email,
-        password: formData.password,
-        name: formData.fullName,
-        image: "",
-        role:formData.role,
-        bloodGroup:formData.bloodGroup,
-        district:formData.district,
-        upazila:formData.upazila 
+        email: rawData.email,
+        password: rawData.password,
+        name: rawData.fullName,
+        image: avatarUrl,
+        role: rawData.role || "donor", // Captured natively from HeroUI v3 radio
+        bloodGroup: rawData.bloodGroup,
+        district: rawData.district,
+        upazila: rawData.upazila,
       });
+
       if (error) {
         alert(error.message || "Registration failed.");
         return;
       }
 
-      console.log("Submitting to your backend:", finalUserData);
       alert("Registration Successful!");
+      router.push("/login");
     } catch (err) {
       console.error(err);
       alert("Something went wrong.");
@@ -121,229 +123,205 @@ export default function Register() {
     <div className="min-h-screen bg-white text-zinc-900 py-12 md:py-20 font-[family-name:var(--font-inter)]">
       <div className="mx-auto max-w-2xl px-6">
         
-        <div className="text-center mb-10 flex flex-col items-center">
-          <h1 className="text-3xl md:text-4xl font-black tracking-tight font-[family-name:var(--font-plus-jakarta-sans)] text-zinc-900 mb-2">
-            Create Account
-          </h1>
-          <p className="text-sm md:text-base text-zinc-500 font-medium">
-            Join the BloodLink donor community
-          </p>
-        </div>
-
-        <form onSubmit={handleSubmit} className="space-y-6">
-          
-          
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-            <div className="flex flex-col gap-2">
-              <label className="text-[14px] font-bold text-zinc-800">Full Name</label>
-              <input
-                type="text"
-                name="fullName"
-                placeholder="Your name"
-                value={formData.fullName}
-                onChange={handleInputChange}
-                className="w-full px-4 py-3 bg-zinc-50/50 border border-zinc-200 rounded-xl text-[15px] font-medium placeholder-zinc-400 focus:outline-none focus:border-[#14B8A6] focus:ring-1 focus:ring-[#14B8A6] transition-all"
-                required
-              />
+        {/* Native HeroUI Form Wrapping */}
+        <Form onSubmit={handleSubmit} className="space-y-6">
+          <Fieldset className="w-full space-y-6">
+            
+            <div className="text-center mb-4 flex flex-col items-center w-full">
+              <Fieldset.Legend className="text-3xl md:text-4xl font-black tracking-tight font-[family-name:var(--font-plus-jakarta-sans)] text-zinc-900 mb-2">
+                Create Account
+              </Fieldset.Legend>
+              <Description className="text-sm md:text-base text-zinc-500 font-medium">
+                Join the BloodLink donor community
+              </Description>
             </div>
 
-            <div className="flex flex-col gap-2">
-              <label className="text-[14px] font-bold text-zinc-800">Email Address</label>
-              <input
-                type="email"
-                name="email"
-                placeholder="Your email"
-                value={formData.email}
-                onChange={handleInputChange}
-                className="w-full px-4 py-3 bg-zinc-50/50 border border-zinc-200 rounded-xl text-[15px] font-medium placeholder-zinc-400 focus:outline-none focus:border-[#14B8A6] focus:ring-1 focus:ring-[#14B8A6] transition-all"
-                required
-              />
-            </div>
-          </div>
-
-          
-          <div className="flex flex-col gap-2">
-            <label className="text-[14px] font-bold text-zinc-800">Profile Photo</label>
-            <div className="relative border-2 border-dashed border-zinc-200 hover:border-zinc-300 rounded-2xl bg-zinc-50/30 p-8 transition-colors flex flex-col items-center justify-center text-center group cursor-pointer">
-              <input
-                type="file"
-                accept="image/*"
-                onChange={handleFileChange}
-                className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
-                
-              />
+            <Fieldset.Group className="grid grid-cols-1 gap-5 w-full">
               
-              {imagePreview ? (
-                <div className="relative h-20 w-20 rounded-full overflow-hidden border border-zinc-200">
-                  <img src={imagePreview} alt="Preview" className="h-full w-full object-cover" />
+              {/* Row 1: Name and Email */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 w-full">
+                <TextField isRequired name="fullName">
+                  <Label className="text-[14px] font-bold text-zinc-800">Full Name</Label>
+                  <Input placeholder="Your name" className="w-full bg-zinc-50/50 rounded-xl" />
+                </TextField>
+
+                <TextField isRequired name="email" type="email">
+                  <Label className="text-[14px] font-bold text-zinc-800">Email Address</Label>
+                  <Input placeholder="Your email" className="w-full bg-zinc-50/50 rounded-xl" />
+                </TextField>
+              </div>
+
+              {/* Row 2: Profile Photo Custom Field */}
+              <div className="flex flex-col gap-2 w-full">
+                <Label className="text-[14px] font-bold text-zinc-800">Profile Photo</Label>
+                <div className="relative border-2 border-dashed border-zinc-200 hover:border-zinc-300 rounded-2xl bg-zinc-50/30 p-8 transition-colors flex flex-col items-center justify-center text-center group cursor-pointer">
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={handleFileChange}
+                    className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
+                  />
+                  {imagePreview ? (
+                    <div className="relative h-20 w-20 rounded-full overflow-hidden border border-zinc-200">
+                      <img src={imagePreview} alt="Preview" className="h-full w-full object-cover" />
+                    </div>
+                  ) : (
+                    <>
+                      <div className="h-10 w-10 rounded-xl bg-zinc-100 group-hover:bg-zinc-200/70 text-zinc-500 flex items-center justify-center mb-3 transition-colors">
+                        <Upload className="h-5 w-5 stroke-[2.2]" />
+                      </div>
+                      <p className="text-[14px] font-bold text-zinc-700">Click to upload or drag & drop</p>
+                      <p className="text-xs text-zinc-400 mt-1 font-medium">PNG, JPG up to 5MB</p>
+                    </>
+                  )}
                 </div>
-              ) : (
-                <>
-                  <div className="h-10 w-10 rounded-xl bg-zinc-100 group-hover:bg-zinc-200/70 text-zinc-500 flex items-center justify-center mb-3 transition-colors">
-                    <Upload className="h-5 w-5 stroke-[2.2]" />
+              </div>
+
+              {/* Row 3: Blood Group, District, Upazila (HeroUI v3 Select Composition) */}
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-5 w-full">
+                
+             {/* 1. Blood Group Dropdown */}
+<Select isRequired name="bloodGroup" placeholder="Select Group">
+  <Label className="text-[14px] font-bold text-zinc-800">Blood Group</Label>
+  <Select.Trigger>
+    {/* CRITICAL: This displays the selected text inside the field */}
+    <Select.Value />
+    <Select.Indicator />
+  </Select.Trigger>
+  <Select.Popover>
+    <ListBox>
+      {["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"].map((bg) => (
+        <ListBox.Item id={bg} key={bg} textValue={bg}>
+          {bg}
+        </ListBox.Item>
+      ))}
+    </ListBox>
+  </Select.Popover>
+</Select>
+
+{/* 2. District Dropdown */}
+<Select 
+  isRequired 
+  name="district" 
+  placeholder="Select District"
+  value={selectedDistrict}
+  onChange={(key) => setSelectedDistrict(String(key))}
+>
+  <Label className="text-[14px] font-bold text-zinc-800">District</Label>
+  <Select.Trigger>
+    {/* CRITICAL: This displays the selected text inside the field */}
+    <Select.Value />
+    <Select.Indicator />
+  </Select.Trigger>
+  <Select.Popover>
+    <ListBox>
+      {districtsList.map((dist) => (
+        <ListBox.Item id={dist.name} key={dist.id} textValue={dist.name}>
+          {dist.name}
+        </ListBox.Item>
+      ))}
+    </ListBox>
+  </Select.Popover>
+</Select>
+
+{/* 3. Upazila Dropdown */}
+<Select 
+  isRequired 
+  name="upazila" 
+  placeholder="Select Upazila"
+  isDisabled={filteredUpazilas.length === 0}
+>
+  <Label className="text-[14px] font-bold text-zinc-800">Upazila</Label>
+  <Select.Trigger>
+    {/* CRITICAL: This displays the selected text inside the field */}
+    <Select.Value />
+    <Select.Indicator />
+  </Select.Trigger>
+  <Select.Popover>
+    <ListBox>
+      {filteredUpazilas.map((upz) => (
+        <ListBox.Item id={upz.name} key={upz.id} textValue={upz.name}>
+          {upz.name}
+        </ListBox.Item>
+      ))}
+    </ListBox>
+  </Select.Popover>
+</Select>
+
+              </div>
+
+              {/* Row 4: Password Complex Fields */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 w-full">
+                <TextField isRequired name="password">
+                  <Label className="text-[14px] font-bold text-zinc-800">Password</Label>
+                  <div className="relative w-full">
+                    <Input 
+                      type={showPassword ? "text" : "password"} 
+                      placeholder="••••••••" 
+                      className="w-full bg-zinc-50/50 rounded-xl"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword(!showPassword)}
+                      className="absolute right-4 top-1/2 -translate-y-1/2 text-zinc-400 hover:text-zinc-600 z-20"
+                    >
+                      {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                    </button>
                   </div>
-                  <p className="text-[14px] font-bold text-zinc-700">Click to upload or drag & drop</p>
-                  <p className="text-xs text-zinc-400 mt-1 font-medium">PNG, JPG up to 5MB</p>
+                </TextField>
+
+                <TextField isRequired name="confirmPassword">
+                  <Label className="text-[14px] font-bold text-zinc-800">Confirm Password</Label>
+                  <Input type="password" placeholder="••••••••" className="w-full bg-zinc-50/50 rounded-xl" />
+                </TextField>
+              </div>
+
+              {/* Row 5: Register As (Clean Compound Layout matching v3.2+) */}
+              <div className="flex flex-col gap-2 w-full">
+                <Label className="text-[14px] font-bold text-zinc-800">Register As</Label>
+                <RadioGroup name="role" defaultValue="donor" orientation="horizontal">
+                  <Radio value="donor">
+                    <Radio.Content>
+                      <Radio.Control><Radio.Indicator /></Radio.Control>
+                      <span className="text-sm font-medium text-zinc-700 ml-1">Donor</span>
+                    </Radio.Content>
+                  </Radio>
+                  <Radio value="volunteer">
+                    <Radio.Content>
+                      <Radio.Control><Radio.Indicator /></Radio.Control>
+                      <span className="text-sm font-medium text-zinc-700 ml-1">Volunteer</span>
+                    </Radio.Content>
+                  </Radio>
+                </RadioGroup>
+              </div>
+
+            </Fieldset.Group>
+
+            {/* Core HeroUI Form Button component */}
+            <Button
+              type="submit"
+              disabled={isSubmitting}
+              className="w-full bg-[#D62828] hover:bg-[#b21e1e] disabled:bg-zinc-400 text-white text-[15px] font-bold py-3.5 rounded-xl transition-all flex items-center justify-center gap-2"
+            >
+              {isSubmitting ? (
+                <>
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                  Creating Profile...
                 </>
+              ) : (
+                "Sign Up"
               )}
-            </div>
-          </div>
+            </Button>
 
-         
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
-            
-           
-            <div className="flex flex-col gap-2 relative">
-              <label className="text-[14px] font-bold text-zinc-800">Blood Group</label>
-              <div className="relative">
-                <select
-                  name="bloodGroup"
-                  value={formData.bloodGroup}
-                  onChange={handleInputChange}
-                  className="w-full appearance-none px-4 py-3 bg-zinc-50/50 border border-zinc-200 rounded-xl text-[15px] font-bold text-zinc-700 focus:outline-none focus:border-[#14B8A6] transition-all cursor-pointer"
-                >
-                  {["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"].map((bg) => (
-                    <option key={bg} value={bg}>{bg}</option>
-                  ))}
-                </select>
-                <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 h-4 w-4 text-zinc-400 pointer-events-none stroke-[2.5]" />
-              </div>
-            </div>
+            <p className="text-center text-sm text-zinc-500 font-medium pt-2">
+              Already have an account?{" "}
+              <Link href="/login" className="text-[#14B8A6] hover:underline font-bold">
+                Sign In
+              </Link>
+            </p>
 
-         
-            <div className="flex flex-col gap-2 relative">
-              <label className="text-[14px] font-bold text-zinc-800">District</label>
-              <div className="relative">
-                <select
-                  name="district"
-                  value={formData.district}
-                  onChange={handleInputChange}
-                  className="w-full appearance-none px-4 py-3 bg-zinc-50/50 border border-zinc-200 rounded-xl text-[15px] font-bold text-zinc-700 focus:outline-none focus:border-[#14B8A6] transition-all cursor-pointer"
-                >
-                  {districtsList.map((dist) => (
-                    <option key={dist.id} value={dist.name}>
-                      {dist.name}
-                    </option>
-                  ))}
-                </select>
-                <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 h-4 w-4 text-zinc-400 pointer-events-none stroke-[2.5]" />
-              </div>
-            </div>
-
-            
-            <div className="flex flex-col gap-2 relative">
-              <label className="text-[14px] font-bold text-zinc-800">Upazila</label>
-              <div className="relative">
-                <select
-                  name="upazila"
-                  value={formData.upazila}
-                  onChange={handleInputChange}
-                  disabled={filteredUpazilas.length === 0}
-                  className="w-full appearance-none px-4 py-3 bg-zinc-50/50 border border-zinc-200 rounded-xl text-[15px] font-bold text-zinc-700 focus:outline-none focus:border-[#14B8A6] transition-all cursor-pointer disabled:opacity-60"
-                >
-                  {filteredUpazilas.map((upz) => (
-                    <option key={upz.id} value={upz.name}>
-                      {upz.name}
-                    </option>
-                  ))}
-                </select>
-                <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 h-4 w-4 text-zinc-400 pointer-events-none stroke-[2.5]" />
-              </div>
-            </div>
-          </div>
-
-        
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-            <div className="flex flex-col gap-2 relative">
-              <label className="text-[14px] font-bold text-zinc-800">Password</label>
-              <div className="relative">
-                <input
-                  type={showPassword ? "text" : "password"}
-                  name="password"
-                  placeholder="••••••••"
-                  value={formData.password}
-                  onChange={handleInputChange}
-                  className="w-full px-4 py-3 bg-zinc-50/50 border border-zinc-200 rounded-xl text-[15px] font-medium placeholder-zinc-300 focus:outline-none focus:border-[#14B8A6] transition-all"
-                  required
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-4 top-1/2 -translate-y-1/2 text-zinc-400 hover:text-zinc-600"
-                >
-                  {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                </button>
-              </div>
-            </div>
-
-            <div className="flex flex-col gap-2">
-              <label className="text-[14px] font-bold text-zinc-800">Confirm Password</label>
-              <input
-                type="password"
-                name="confirmPassword"
-                placeholder=""
-                value={formData.confirmPassword}
-                onChange={handleInputChange}
-                className="w-full px-4 py-3 bg-zinc-50/50 border border-zinc-200 rounded-xl text-[15px] font-medium placeholder-zinc-300 focus:outline-none focus:border-[#14B8A6] transition-all"
-                required
-              />
-            </div>
-          </div>
-         
-<div className="flex flex-col gap-2 mb-4">
-  <label className="text-[14px] font-bold text-zinc-800 dark:text-zinc-200">
-    Register As
-  </label>
-   <RadioGroup defaultValue="premium" name="plan">
-      <Label>Plan selection</Label>
-      <Description>Choose the role that suits you best</Description>
-      <Radio value="donor">
-        <Radio.Content>
-          <Radio.Control>
-            <Radio.Indicator />
-          </Radio.Control>
-          Donor
-        </Radio.Content>
-        
-      </Radio>
-      <Radio value="volunteer">
-        <Radio.Content>
-          <Radio.Control>
-            <Radio.Indicator />
-          </Radio.Control>
-          Volunteer
-          
-        </Radio.Content>
-      
-      </Radio>
-     
-    </RadioGroup>
-</div>
-
-          
-          <button
-            type="submit"
-            disabled={isSubmitting}
-            className="w-full mt-4 bg-[#D62828] hover:bg-[#b21e1e] disabled:bg-zinc-400 text-white text-[15px] font-bold py-3.5 rounded-xl shadow-lg shadow-red-600/15 transition-all flex items-center justify-center gap-2"
-          >
-            {isSubmitting ? (
-              <>
-                <Loader2 className="h-4 w-4 animate-spin" />
-                Creating Profile...
-              </>
-            ) : (
-              "Sign Up"
-            )}
-          </button>
-
-          <p className="text-center text-sm text-zinc-500 font-medium pt-2">
-            Already have an account?{" "}
-            <Link href="/login" className="text-[#14B8A6] hover:underline font-bold">
-              Sign In
-            </Link>
-          </p>
-
-        </form>
+          </Fieldset>
+        </Form>
       </div>
     </div>
   );
