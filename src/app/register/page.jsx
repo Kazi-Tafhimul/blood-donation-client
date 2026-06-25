@@ -6,7 +6,7 @@ import { authClient } from "@/lib/auth-client";
 import { Upload, Eye, EyeOff, Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 
-// Fully utilizing HeroUI v3 Advanced Form Architecture
+
 import {
   Form,
   Fieldset,
@@ -27,7 +27,7 @@ import upazilasList from "../../data/upazilas.json";
 export default function Register() {
   const router = useRouter();
   
-  // Track ONLY dynamic dependency states (District -> Upazila mapping) and UI toggles
+
   const [selectedDistrict, setSelectedDistrict] = useState("Dhaka");
   const [filteredUpazilas, setFilteredUpazilas] = useState([]);
   const [showPassword, setShowPassword] = useState(false);
@@ -35,7 +35,7 @@ export default function Register() {
   const [imagePreview, setImagePreview] = useState(null);
   const [avatarFile, setAvatarFile] = useState(null);
 
-  // Re-calculate upazilas whenever the district changes
+ 
   useEffect(() => {
     const selectedDistrictObj = districtsList.find(
       (d) => d.name.toLowerCase() === selectedDistrict.toLowerCase()
@@ -57,14 +57,14 @@ export default function Register() {
     }
   };
 
-  // Modern Native Submission Handler (Matching Mentor's Pattern)
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     
     const formDataInstance = new FormData(e.currentTarget);
     const rawData = Object.fromEntries(formDataInstance.entries());
 
-    // Validate passwords manually matching your business logic
+    
     if (rawData.password !== rawData.confirmPassword) {
       alert("Passwords do not match!");
       return;
@@ -75,7 +75,7 @@ export default function Register() {
     try {
       let avatarUrl = "";
 
-      // Image upload handling
+     
       if (avatarFile) {
         const imgBbFormData = new FormData();
         imgBbFormData.append("image", avatarFile);
@@ -92,13 +92,13 @@ export default function Register() {
         }
       }
 
-      // Submit formatted data directly to auth client
+      
       const { data, error } = await authClient.signUp.email({
         email: rawData.email,
         password: rawData.password,
         name: rawData.fullName,
         image: avatarUrl,
-        role: rawData.role || "donor", // Captured natively from HeroUI v3 radio
+        role: rawData.role || "donor", 
         bloodGroup: rawData.bloodGroup,
         district: rawData.district,
         upazila: rawData.upazila,
@@ -123,7 +123,7 @@ export default function Register() {
     <div className="min-h-screen bg-white text-zinc-900 py-12 md:py-20 font-[family-name:var(--font-inter)]">
       <div className="mx-auto max-w-2xl px-6">
         
-        {/* Native HeroUI Form Wrapping */}
+       
         <Form onSubmit={handleSubmit} className="space-y-6">
           <Fieldset className="w-full space-y-6">
             
@@ -138,7 +138,7 @@ export default function Register() {
 
             <Fieldset.Group className="grid grid-cols-1 gap-5 w-full">
               
-              {/* Row 1: Name and Email */}
+             
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 w-full">
                 <TextField isRequired name="fullName">
                   <Label className="text-[14px] font-bold text-zinc-800">Full Name</Label>
@@ -151,7 +151,7 @@ export default function Register() {
                 </TextField>
               </div>
 
-              {/* Row 2: Profile Photo Custom Field */}
+            
               <div className="flex flex-col gap-2 w-full">
                 <Label className="text-[14px] font-bold text-zinc-800">Profile Photo</Label>
                 <div className="relative border-2 border-dashed border-zinc-200 hover:border-zinc-300 rounded-2xl bg-zinc-50/30 p-8 transition-colors flex flex-col items-center justify-center text-center group cursor-pointer">
@@ -177,14 +177,13 @@ export default function Register() {
                 </div>
               </div>
 
-              {/* Row 3: Blood Group, District, Upazila (HeroUI v3 Select Composition) */}
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-5 w-full">
                 
-             {/* 1. Blood Group Dropdown */}
+             
 <Select isRequired name="bloodGroup" placeholder="Select Group">
   <Label className="text-[14px] font-bold text-zinc-800">Blood Group</Label>
   <Select.Trigger>
-    {/* CRITICAL: This displays the selected text inside the field */}
+    
     <Select.Value />
     <Select.Indicator />
   </Select.Trigger>
@@ -199,7 +198,7 @@ export default function Register() {
   </Select.Popover>
 </Select>
 
-{/* 2. District Dropdown */}
+
 <Select 
   isRequired 
   name="district" 
@@ -209,7 +208,7 @@ export default function Register() {
 >
   <Label className="text-[14px] font-bold text-zinc-800">District</Label>
   <Select.Trigger>
-    {/* CRITICAL: This displays the selected text inside the field */}
+    
     <Select.Value />
     <Select.Indicator />
   </Select.Trigger>
@@ -224,7 +223,7 @@ export default function Register() {
   </Select.Popover>
 </Select>
 
-{/* 3. Upazila Dropdown */}
+
 <Select 
   isRequired 
   name="upazila" 
@@ -233,7 +232,7 @@ export default function Register() {
 >
   <Label className="text-[14px] font-bold text-zinc-800">Upazila</Label>
   <Select.Trigger>
-    {/* CRITICAL: This displays the selected text inside the field */}
+    
     <Select.Value />
     <Select.Indicator />
   </Select.Trigger>
@@ -250,7 +249,7 @@ export default function Register() {
 
               </div>
 
-              {/* Row 4: Password Complex Fields */}
+              
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 w-full">
                 <TextField isRequired name="password">
                   <Label className="text-[14px] font-bold text-zinc-800">Password</Label>
@@ -276,7 +275,7 @@ export default function Register() {
                 </TextField>
               </div>
 
-              {/* Row 5: Register As (Clean Compound Layout matching v3.2+) */}
+            
               <div className="flex flex-col gap-2 w-full">
                 <Label className="text-[14px] font-bold text-zinc-800">Register As</Label>
                 <RadioGroup name="role" defaultValue="donor" orientation="horizontal">
@@ -297,7 +296,7 @@ export default function Register() {
 
             </Fieldset.Group>
 
-            {/* Core HeroUI Form Button component */}
+           
             <Button
               type="submit"
               disabled={isSubmitting}
