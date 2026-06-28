@@ -22,7 +22,7 @@ export default function Sidebar({ user }) {
     <aside className="w-64 bg-[#0B132B] text-zinc-100 flex flex-col justify-between p-5 border-r border-zinc-800 shrink-0 min-h-screen">
       <div className="space-y-6">
         <div className="flex items-center gap-2 px-2 py-1">
-          <div className="h-7 w-7 rounded-full bg-[#D62828] flex items-center justify-center text-white font-black text-sm">🩸</div>
+          <div className="h-7 w-7 rounded-full bg-[#D62828] flex items-center justify-center text-white font-black text-sm"></div>
           <span className="text-xl font-black tracking-tight text-white font-[family-name:var(--font-plus-jakarta-sans)]">
             Blood<span className="text-[#D62828]">Link</span>
           </span>
