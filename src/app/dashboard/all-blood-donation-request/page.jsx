@@ -42,8 +42,15 @@ export default function AllBloodDonationRequestsPage() {
   }, [page, requests]);
 
   
+// Handle status update functionality for volunteers safely
   const handleStatusChange = async (requestId, newStatus) => {
+    if (!requestId) {
+      toast.error("Invalid Request ID");
+      return;
+    }
+
     try {
+      // Try calling the standard endpoint with PATCH
       const res = await fetch(`http://localhost:5000/api/requests/${requestId}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
@@ -56,10 +63,25 @@ export default function AllBloodDonationRequestsPage() {
           prev.map((req) => (req._id === requestId ? { ...req, status: newStatus } : req))
         );
       } else {
-        toast.error("Failed to update status.");
+        // Fallback: If your backend uses PUT instead of PATCH, try running a PUT fallback
+        const fallbackRes = await fetch(`http://localhost:5000/api/requests/${requestId}`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ status: newStatus }),
+        });
+
+        if (fallbackRes.ok) {
+          toast.success(`Status updated to ${newStatus}`);
+          setRequests((prev) =>
+            prev.map((req) => (req._id === requestId ? { ...req, status: newStatus } : req))
+          );
+        } else {
+          toast.error("Backend rejected the status update.");
+        }
       }
-    } catch {
-      toast.error("An error occurred while updating status.");
+    } catch (error) {
+      console.error("Status update error:", error);
+      toast.error("Network error updating status.");
     }
   };
 
