@@ -42,7 +42,7 @@ export default function AllBloodDonationRequestsPage() {
   }, [page, requests]);
 
   
-// Handle status update functionality for volunteers safely
+
   const handleStatusChange = async (requestId, newStatus) => {
     if (!requestId) {
       toast.error("Invalid Request ID");
@@ -50,7 +50,7 @@ export default function AllBloodDonationRequestsPage() {
     }
 
     try {
-      // Try calling the standard endpoint with PATCH
+      
       const res = await fetch(`http://localhost:5000/api/requests/${requestId}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
@@ -63,7 +63,7 @@ export default function AllBloodDonationRequestsPage() {
           prev.map((req) => (req._id === requestId ? { ...req, status: newStatus } : req))
         );
       } else {
-        // Fallback: If your backend uses PUT instead of PATCH, try running a PUT fallback
+       
         const fallbackRes = await fetch(`http://localhost:5000/api/requests/${requestId}`, {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
