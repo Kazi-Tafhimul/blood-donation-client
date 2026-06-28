@@ -1,9 +1,9 @@
 "use client";
 
 import React, { useState, useEffect, useMemo } from "react";
-import { Loader2, MoreVertical, Shield, UserCheck, Ban, Unlock } from "lucide-react";
+import { Loader2, MoreVertical, Shield, UserCheck, User, Ban, Unlock } from "lucide-react";
 import { toast } from "react-hot-toast";
-import { Table, Button, Chip } from "@heroui/react";
+import { Button, Chip } from "@heroui/react";
 
 export default function AllUsersManagementPage() {
   const [users, setUsers] = useState([]);
@@ -11,11 +11,9 @@ export default function AllUsersManagementPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [activeDropdown, setActiveDropdown] = useState(null);
 
-  
   const [page, setPage] = useState(1);
   const rowsPerPage = 5;
 
- 
   const fetchUsers = () => {
     setIsLoading(true);
     fetch(`http://localhost:5000/api/users?status=${statusFilter}`)
@@ -26,7 +24,7 @@ export default function AllUsersManagementPage() {
         setIsLoading(false);
       })
       .catch(() => {
-        toast.error("Failed to load users profiles.");
+        toast.error("Failed to load user profiles.");
         setIsLoading(false);
       });
   };
@@ -35,14 +33,12 @@ export default function AllUsersManagementPage() {
     fetchUsers();
   }, [statusFilter]);
 
- 
   const pages = Math.ceil(users.length / rowsPerPage);
   const items = useMemo(() => {
     const start = (page - 1) * rowsPerPage;
     return users.slice(start, start + rowsPerPage);
   }, [page, users]);
 
- 
   const updateUserFields = async (userId, payload) => {
     setActiveDropdown(null);
     try {
@@ -52,13 +48,13 @@ export default function AllUsersManagementPage() {
         body: JSON.stringify(payload),
       });
       if (res.ok) {
-        toast.success("User configuration updated successfully!");
-        fetchUsers(); 
+        toast.success("User updated successfully!");
+        fetchUsers();
       } else {
-        toast.error("Failed to perform user update operations.");
+        toast.error("Failed to update user.");
       }
     } catch {
-      toast.error("Network connection failure occurred.");
+      toast.error("Network error.");
     }
   };
 
@@ -73,13 +69,13 @@ export default function AllUsersManagementPage() {
   return (
     <div className="p-6 max-w-6xl mx-auto space-y-6 bg-white rounded-xl shadow-sm border border-zinc-100">
       
+   
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
           <h1 className="text-2xl font-black text-zinc-800 tracking-tight">User Management</h1>
-          <p className="text-sm text-zinc-400">Manage user authorization roles and access status permissions</p>
+          <p className="text-sm text-zinc-400">Manage user authorization roles and status</p>
         </div>
 
-       
         <div className="flex gap-2">
           {["all", "active", "blocked"].map((status) => (
             <Button
@@ -96,66 +92,67 @@ export default function AllUsersManagementPage() {
         </div>
       </div>
 
-      <Table aria-label="System Users Ledger">
-        <Table.ScrollContainer>
-          <Table.Content aria-label="User grid" className="w-full shadow-none">
-            <Table.Header>
-              <Table.Column isRowHeader>AVATAR</Table.Column>
-              <Table.Column>NAME</Table.Column>
-              <Table.Column>EMAIL ADDRESS</Table.Column>
-              <Table.Column>ROLE</Table.Column>
-              <Table.Column>STATUS</Table.Column>
-              <Table.Column className="text-center">ACTIONS</Table.Column>
-            </Table.Header>
+      
+      <div className="w-full rounded-xl border border-zinc-100">
+        <table className="w-full text-left border-collapse">
+          <thead>
+            <tr className="bg-zinc-50 border-b border-zinc-100 text-zinc-600 text-xs font-bold uppercase tracking-wider">
+              <th className="p-4">Avatar</th>
+              <th className="p-4">Name</th>
+              <th className="p-4">Email Address</th>
+              <th className="p-4">Role</th>
+              <th className="p-4">Status</th>
+              <th className="p-4 text-center">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {items.length === 0 ? (
+              <tr>
+                <td colSpan="6" className="text-center py-8 text-zinc-400 text-sm">
+                  No user profiles found.
+                </td>
+              </tr>
+            ) : (
+              items.map((item) => {
+                const currentRole = item.role || "donor";
+                const currentStatus = item.status || "active";
 
-            <Table.Body>
-              {items.length === 0 ? (
-                <Table.Row>
-                  <Table.Cell className="text-center py-8 text-zinc-400">No matching user accounts register profiles found.</Table.Cell>
-                  <Table.Cell></Table.Cell>
-                  <Table.Cell></Table.Cell>
-                  <Table.Cell></Table.Cell>
-                  <Table.Cell></Table.Cell>
-                  <Table.Cell></Table.Cell>
-                </Table.Row>
-              ) : (
-                items.map((item) => (
-                  <Table.Row key={item._id} className="border-b border-zinc-50 relative">
-                    
-                  
-                    <Table.Cell>
-  {item.image ? (
-    <img 
-      src={item.image} 
-      alt={`${item.name || "User"}'s profile`} 
-      className="w-10 h-10 rounded-full object-cover border border-zinc-200"
-    />
-  ) : (
-    <div className="w-10 h-10 rounded-full bg-gradient-to-br from-rose-500 to-red-600 text-black flex items-center justify-center text-sm font-black tracking-wider uppercase border border-red-100 shadow-sm">
-      {item.name ? item.name.charAt(0) : item.email ? item.email.charAt(0) : "U"}
-    </div>
-  )}
-</Table.Cell>
-                    
-                    <Table.Cell className="font-bold text-zinc-800">{item.name || "Anonymous"}</Table.Cell>
-                    <Table.Cell className="text-zinc-500 font-medium">{item.email}</Table.Cell>
-                    
-                  
-                    <Table.Cell>
-                      <Chip size="sm" variant="flat" color={item.role === "admin" ? "danger" : item.role === "volunteer" ? "secondary" : "default"} className="capitalize font-bold">
-                        {item.role || "Donor"}
-                      </Chip>
-                    </Table.Cell>
-
+                return (
+                  <tr key={item._id} className="border-b border-zinc-100 last:border-0 text-sm text-zinc-700 hover:bg-zinc-50/50 transition-colors">
                    
-                    <Table.Cell>
-                      <Chip size="sm" variant="dot" color={item.status === "blocked" ? "danger" : "success"} className="capitalize font-semibold">
-                        {item.status || "active"}
+                    <td className="p-4">
+                      {item.image ? (
+                        <img 
+                          src={item.image} 
+                          alt="Profile" 
+                          className="w-10 h-10 rounded-full object-cover border border-zinc-200"
+                        />
+                      ) : (
+                        <div className="w-10 h-10 rounded-full bg-gradient-to-br from-rose-500 to-red-600 text-blue flex items-center justify-center text-sm font-black uppercase shadow-sm">
+                          {item.name ? item.name.charAt(0) : item.email.charAt(0)}
+                        </div>
+                      )}
+                    </td>
+                    
+                    <td className="p-4 font-bold text-zinc-800">{item.name || "Anonymous"}</td>
+                    <td className="p-4 text-zinc-500 font-medium">{item.email}</td>
+                    
+                   
+                    <td className="p-4">
+                      <Chip size="sm" variant="flat" color={currentRole === "admin" ? "danger" : currentRole === "volunteer" ? "secondary" : "default"} className="capitalize font-bold">
+                        {currentRole}
                       </Chip>
-                    </Table.Cell>
+                    </td>
 
                   
-                    <Table.Cell className="text-center overflow-visible">
+                    <td className="p-4">
+                      <Chip size="sm" variant="dot" color={currentStatus === "blocked" ? "danger" : "success"} className="capitalize font-semibold">
+                        {currentStatus}
+                      </Chip>
+                    </td>
+
+                    
+                    <td className="p-4 text-center">
                       <div className="relative inline-block text-left">
                         <Button 
                           isIconOnly 
@@ -167,39 +164,49 @@ export default function AllUsersManagementPage() {
                         </Button>
 
                         {activeDropdown === item._id && (
-                          <div className="absolute right-0 mt-1 w-48 bg-white border border-zinc-100 rounded-xl shadow-xl z-50 py-1.5 animate-in fade-in slide-in-from-top-1 duration-150">
+                          <div className="absolute right-0 mt-1 w-48 bg-white border border-zinc-200 rounded-xl shadow-xl z-50 py-1.5 ring-1 ring-black ring-opacity-5">
                             
-                            
-                            {(item.status || "active") === "active" ? (
+                           
+                            {currentStatus === "active" ? (
                               <button 
                                 onClick={() => updateUserFields(item._id, { status: "blocked" })}
-                                className="w-full px-4 py-2 text-xs font-bold text-red-600 hover:bg-red-50 flex items-center gap-2"
+                                className="w-full px-4 py-2 text-xs font-bold text-red-600 hover:bg-red-50 flex items-center gap-2 text-left"
                               >
                                 <Ban className="w-3.5 h-3.5" /> Block Account
                               </button>
                             ) : (
                               <button 
                                 onClick={() => updateUserFields(item._id, { status: "active" })}
-                                className="w-full px-4 py-2 text-xs font-bold text-emerald-600 hover:bg-emerald-50 flex items-center gap-2"
+                                className="w-full px-4 py-2 text-xs font-bold text-emerald-600 hover:bg-emerald-50 flex items-center gap-2 text-left"
                               >
                                 <Unlock className="w-3.5 h-3.5" /> Unblock Account
                               </button>
                             )}
 
                             
-                            {item.role !== "volunteer" && item.role !== "admin" && (
+                            {currentRole !== "donor" && (
+                              <button 
+                                onClick={() => updateUserFields(item._id, { role: "donor" })}
+                                className="w-full px-4 py-2 text-xs font-semibold text-zinc-700 hover:bg-zinc-50 flex items-center gap-2 border-t border-zinc-100 text-left"
+                              >
+                                <User className="w-3.5 h-3.5 text-blue-500" /> Make Donor
+                              </button>
+                            )}
+
+                            
+                            {currentRole !== "volunteer" && (
                               <button 
                                 onClick={() => updateUserFields(item._id, { role: "volunteer" })}
-                                className="w-full px-4 py-2 text-xs font-semibold text-zinc-700 hover:bg-zinc-50 flex items-center gap-2 border-t border-zinc-100"
+                                className="w-full px-4 py-2 text-xs font-semibold text-zinc-700 hover:bg-zinc-50 flex items-center gap-2 border-t border-zinc-100 text-left"
                               >
                                 <UserCheck className="w-3.5 h-3.5 text-purple-500" /> Make Volunteer
                               </button>
                             )}
 
-                            {item.role !== "admin" && (
+                            {currentRole !== "admin" && (
                               <button 
                                 onClick={() => updateUserFields(item._id, { role: "admin" })}
-                                className="w-full px-4 py-2 text-xs font-semibold text-zinc-700 hover:bg-zinc-50 flex items-center gap-2 border-t border-zinc-100"
+                                className="w-full px-4 py-2 text-xs font-semibold text-zinc-700 hover:bg-zinc-50 flex items-center gap-2 border-t border-zinc-100 text-left"
                               >
                                 <Shield className="w-3.5 h-3.5 text-red-500" /> Make Admin
                               </button>
@@ -207,17 +214,17 @@ export default function AllUsersManagementPage() {
                           </div>
                         )}
                       </div>
-                    </Table.Cell>
+                    </td>
 
-                  </Table.Row>
-                ))
-              )}
-            </Table.Body>
-          </Table.Content>
-        </Table.ScrollContainer>
-      </Table>
+                  </tr>
+                );
+              })
+            )}
+          </tbody>
+        </table>
+      </div>
 
-     
+      
       {pages > 1 && (
         <div className="flex w-full justify-center pt-4 border-t border-zinc-100">
           <div className="flex gap-4 items-center">
