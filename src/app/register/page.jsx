@@ -58,67 +58,79 @@ export default function Register() {
   };
 
 
-  const handleSubmit = async (e) => {
+
+const handleSubmit = async (e) => {
     e.preventDefault();
     
     const formDataInstance = new FormData(e.currentTarget);
     const rawData = Object.fromEntries(formDataInstance.entries());
 
-    
     if (rawData.password !== rawData.confirmPassword) {
       alert("Passwords do not match!");
       return;
     }
 
     setIsSubmitting(true);
+    console.log(" Form submission started...");
 
     try {
       let avatarUrl = "";
 
-     
       if (avatarFile) {
+        console.log(" Image file detected, starting ImgBB upload...");
+        
         const imgBbFormData = new FormData();
         imgBbFormData.append("image", avatarFile);
 
-        const IMGBB_API_KEY = "YOUR_IMGBB_API_KEY_HERE"; 
-        const response = await fetch(`https://api.imgbb.com/1/upload?key=${IMGBB_API_KEY}`, {
+        const apiKey = process.env.NEXT_PUBLIC_IMGBB_API_KEY;
+        if (!apiKey) {
+          throw new Error("API Key is missing! Check your .env.local file.");
+        }
+
+        const response = await fetch(`https://api.imgbb.com/1/upload?key=${apiKey}`, {
           method: "POST",
           body: imgBbFormData,
         });
 
         const imgData = await response.json();
+        console.log("ImgBB Response:", imgData);
+
         if (imgData.success) {
           avatarUrl = imgData.data.url;
+          console.log(" Image URL received:", avatarUrl);
+        } else {
+          throw new Error("Image upload failed: " + (imgData.error?.message || "Unknown error"));
         }
+      } else {
+        console.log(" No image uploaded, proceeding with empty string.");
       }
 
-      
+      console.log(" Sending data to authClient...", { ...rawData, image: avatarUrl });
+
       const { data, error } = await authClient.signUp.email({
         email: rawData.email,
         password: rawData.password,
         name: rawData.fullName,
         image: avatarUrl,
-        role: rawData.role || "donor", 
+        role: rawData.role || "donor",
         bloodGroup: rawData.bloodGroup,
         district: rawData.district,
         upazila: rawData.upazila,
       });
 
-      if (error) {
-        alert(error.message || "Registration failed.");
-        return;
-      }
+      if (error) throw new Error(error.message);
 
+      console.log(" Registration successful!");
       alert("Registration Successful!");
       router.push("/login");
+      
     } catch (err) {
-      console.error(err);
-      alert("Something went wrong.");
+      console.error(" Error during registration:", err);
+      alert(err.message || "Something went wrong.");
     } finally {
       setIsSubmitting(false);
     }
   };
-
   return (
     <div className="min-h-screen bg-white text-zinc-900 py-12 md:py-20 font-[family-name:var(--font-inter)]">
       <div className="mx-auto max-w-2xl px-6">
