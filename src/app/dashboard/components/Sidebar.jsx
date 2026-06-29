@@ -1,11 +1,21 @@
 "use client";
-import React from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
 import { LayoutDashboard, User, FileText, PlusCircle, Users, LogOut, Globe } from "lucide-react";
 
 export default function Sidebar({ user }) {
   const role = user.role || "donor";
+  
+  
+  const [displayName, setDisplayName] = useState(user.name || "nabila");
+
+ 
+  useEffect(() => {
+    const savedName = localStorage.getItem("updated_user_name");
+    if (savedName) {
+      setDisplayName(savedName);
+    }
+  }, []);
 
   const allLinks = [
     { label: "Dashboard", href: "/dashboard", icon: LayoutDashboard, roles: ["donor", "volunteer", "admin"] },
@@ -30,10 +40,10 @@ export default function Sidebar({ user }) {
 
         <div className="bg-[#1C2541] rounded-xl p-3 flex items-center gap-3 border border-zinc-800">
           <div className="h-10 w-10 rounded-full bg-[#D62828] text-white flex items-center justify-center font-bold uppercase shrink-0">
-            {user.name?.slice(0, 2)}
+            {displayName.slice(0, 2)}
           </div>
           <div className="overflow-hidden">
-            <h4 className="text-sm font-bold text-white truncate">{user.name}</h4>
+            <h4 className="text-sm font-bold text-white truncate">{displayName}</h4>
             <span className="text-xs font-semibold text-zinc-400 capitalize">{role}</span>
           </div>
         </div>
