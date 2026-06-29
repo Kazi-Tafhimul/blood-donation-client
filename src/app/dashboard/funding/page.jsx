@@ -41,14 +41,18 @@ export default function FundingPage() {
   }, [session, sessionLoading]);
 
   const fetchFundingHistory = () => {
-    fetch("http://localhost:5000/api/fundings")
-      .then((res) => res.json())
-      .then((data) => {
-        setFundings(data);
-        setIsLoading(false);
-      })
-      .catch(() => setIsLoading(false));
-  };
+  setIsLoading(true);
+  fetch("http://localhost:5000/api/fundings")
+    .then((res) => res.json())
+    .then((data) => {
+      setFundings(Array.isArray(data) ? data : []);
+      setIsLoading(false);
+    })
+    .catch((err) => {
+      console.error("Fetch error:", err);
+      setIsLoading(false);
+    });
+};
 
   useEffect(() => {
     if (session) fetchFundingHistory();
@@ -236,17 +240,22 @@ function StripeCheckoutForm({ amount, user, onSuccess }) {
         toast.error(error.message);
         setIsProcessing(false);
       } else if (paymentIntent.status === "succeeded") {
-        await fetch("http://localhost:5000/api/fundings", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            userName: user?.name,
-            userEmail: user?.email,
-            amount: amount,
-            date: new Date().toISOString(),
-            transactionId: paymentIntent.id,
-          }),
-        });
+        const sessionData = await authClient.getSession();
+        const token = sessionData?.data?.token;
+
+       await fetch("http://localhost:5000/api/fundings", {
+  method: "POST",
+  headers: { 
+    "Content-Type": "application/json"
+  },
+  body: JSON.stringify({
+    userName: user?.name,
+    userEmail: user?.email,
+    amount: amount,
+    date: new Date().toISOString(),
+    transactionId: paymentIntent.id,
+  }),
+});
 
         toast.success("Funding payment processed successfully! Thank you.");
         onSuccess();

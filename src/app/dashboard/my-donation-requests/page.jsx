@@ -12,7 +12,6 @@ export default function MyDonationRequestsPage() {
   const [statusFilter, setStatusFilter] = useState("all");
   const [isLoading, setIsLoading] = useState(true);
 
-  
   const [page, setPage] = useState(1);
   const rowsPerPage = 5;
 
@@ -25,9 +24,9 @@ export default function MyDonationRequestsPage() {
     }
 
     setIsLoading(true);
-    
+
     fetch(
-      `http://localhost:5000/api/requests?email=${userEmail}&status=${statusFilter}`
+      `http://localhost:5000/api/requests?email=${userEmail}&status=${statusFilter}`,
     )
       .then((res) => res.json())
       .then((data) => {
@@ -53,6 +52,9 @@ export default function MyDonationRequestsPage() {
   const handleDelete = async (id) => {
     if (!confirm("Delete this request?")) return;
     try {
+      const sessionData = await authClient.getSession();
+      
+
       const res = await fetch(`http://localhost:5000/api/requests/${id}`, {
         method: "DELETE",
       });
@@ -77,7 +79,6 @@ export default function MyDonationRequestsPage() {
 
   return (
     <div className="p-6 max-w-6xl mx-auto space-y-6 bg-white rounded-xl">
-      
       <div className="flex gap-2 border-b pb-4">
         {["all", "pending", "inprogress", "done", "canceled"].map((status) => (
           <Button
@@ -93,10 +94,12 @@ export default function MyDonationRequestsPage() {
         ))}
       </div>
 
-    
       <Table aria-label="Requests Table">
         <Table.ScrollContainer>
-          <Table.Content aria-label="Donation requests container" className="w-full shadow-none border border-zinc-100 rounded-xl">
+          <Table.Content
+            aria-label="Donation requests container"
+            className="w-full shadow-none border border-zinc-100 rounded-xl"
+          >
             <Table.Header>
               <Table.Column isRowHeader>RECIPIENT</Table.Column>
               <Table.Column>LOCATION</Table.Column>
@@ -109,7 +112,9 @@ export default function MyDonationRequestsPage() {
             <Table.Body>
               {items.length === 0 ? (
                 <Table.Row>
-                  <Table.Cell className="text-center py-8 text-zinc-400">No requests found matching your criteria.</Table.Cell>
+                  <Table.Cell className="text-center py-8 text-zinc-400">
+                    No requests found matching your criteria.
+                  </Table.Cell>
                   <Table.Cell></Table.Cell>
                   <Table.Cell></Table.Cell>
                   <Table.Cell></Table.Cell>
@@ -124,25 +129,50 @@ export default function MyDonationRequestsPage() {
                     </Table.Cell>
                     <Table.Cell>{item.recipientDistrict}</Table.Cell>
                     <Table.Cell>
-                      <Chip size="sm" color="danger" variant="flat" className="font-bold">
+                      <Chip
+                        size="sm"
+                        color="danger"
+                        variant="flat"
+                        className="font-bold"
+                      >
                         {item.bloodGroup}
                       </Chip>
                     </Table.Cell>
                     <Table.Cell>{item.donationDate}</Table.Cell>
                     <Table.Cell>
-                      <Chip size="sm" variant="flat" className="capitalize font-bold">
+                      <Chip
+                        size="sm"
+                        variant="flat"
+                        className="capitalize font-bold"
+                      >
                         {item.status || "Pending"}
                       </Chip>
                     </Table.Cell>
                     <Table.Cell>
                       <div className="flex gap-2">
-                        <Button isIconOnly size="sm" variant="light" className="text-blue-500">
+                        <Button
+                          isIconOnly
+                          size="sm"
+                          variant="light"
+                          className="text-blue-500"
+                        >
                           <Eye className="w-4 h-4" />
                         </Button>
-                        <Button isIconOnly size="sm" variant="light" className="text-amber-500">
+                        <Button
+                          isIconOnly
+                          size="sm"
+                          variant="light"
+                          className="text-amber-500"
+                        >
                           <Edit2 className="w-4 h-4" />
                         </Button>
-                        <Button isIconOnly size="sm" variant="light" className="text-rose-500" onClick={() => handleDelete(item._id)}>
+                        <Button
+                          isIconOnly
+                          size="sm"
+                          variant="light"
+                          className="text-rose-500"
+                          onClick={() => handleDelete(item._id)}
+                        >
                           <Trash2 className="w-4 h-4" />
                         </Button>
                       </div>
@@ -155,14 +185,16 @@ export default function MyDonationRequestsPage() {
         </Table.ScrollContainer>
       </Table>
 
-      
       {pages > 1 && (
-        <CustomPaginationLayout page={page} totalPages={pages} setPage={setPage} />
+        <CustomPaginationLayout
+          page={page}
+          totalPages={pages}
+          setPage={setPage}
+        />
       )}
     </div>
   );
 }
-
 
 function CustomPaginationLayout({ page, totalPages, setPage }) {
   return (
@@ -170,12 +202,15 @@ function CustomPaginationLayout({ page, totalPages, setPage }) {
       <Pagination className="justify-center">
         <Pagination.Content>
           <Pagination.Item>
-            <Pagination.Previous isDisabled={page === 1} onPress={() => setPage((p) => p - 1)}>
+            <Pagination.Previous
+              isDisabled={page === 1}
+              onPress={() => setPage((p) => p - 1)}
+            >
               <Pagination.PreviousIcon />
               <span>Previous</span>
             </Pagination.Previous>
           </Pagination.Item>
-          
+
           {Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => (
             <Pagination.Item key={p}>
               <Pagination.Link isActive={p === page} onPress={() => setPage(p)}>
@@ -185,7 +220,10 @@ function CustomPaginationLayout({ page, totalPages, setPage }) {
           ))}
 
           <Pagination.Item>
-            <Pagination.Next isDisabled={page === totalPages} onPress={() => setPage((p) => p + 1)}>
+            <Pagination.Next
+              isDisabled={page === totalPages}
+              onPress={() => setPage((p) => p + 1)}
+            >
               <span>Next</span>
               <Pagination.NextIcon />
             </Pagination.Next>
