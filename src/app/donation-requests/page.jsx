@@ -73,7 +73,7 @@ const handleLoadMore = () => {
           {requests.map((item) => (
             <Card key={item._id} className="p-5 border border-zinc-100 shadow-sm rounded-2xl flex flex-col justify-between">
               <div>
-                {/* Blood Group Indicator Badge */}
+               
                 <div className="flex justify-between items-center mb-4">
                   <div className="w-12 h-12 rounded-xl bg-red-50 flex items-center justify-center text-red-600 font-black text-lg tracking-tight border border-red-100">
                     {item.bloodGroup}
@@ -83,13 +83,13 @@ const handleLoadMore = () => {
                   </span>
                 </div>
 
-                {/* Recipient Identity */}
+             
                 <div className="mb-4">
                   <span className="text-[10px] text-zinc-400 uppercase tracking-widest font-bold">Recipient</span>
                   <h3 className="text-lg font-black text-zinc-800 leading-snug">{item.recipientName}</h3>
                 </div>
 
-                {/* Detail Meta-Rows */}
+                
                 <div className="space-y-2.5 text-sm text-zinc-500 mb-6">
                   <div className="flex items-center gap-2">
                     <MapPin className="w-4 h-4 text-zinc-400 shrink-0" />
@@ -106,11 +106,11 @@ const handleLoadMore = () => {
                 </div>
               </div>
 
-              {/* View Trigger */}
+              
               <Button
                 color="danger"
                 className="w-full font-bold bg-red-500 hover:bg-red-600 text-white transition-colors"
-                onClick={() => router.push(`/requests/${item._id}`)}
+                onClick={() => router.push(`/donation-requests/${item._id}`)}
               >
                 View Details
               </Button>
