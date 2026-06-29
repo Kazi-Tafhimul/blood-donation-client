@@ -9,11 +9,24 @@ async function getManagementStatistics() {
     await client.connect();
     const db = client.db(process.env.AUTH_DB_NAME || "bloodlink_new");
 
-    
-    const totalUsers = await db.collection("user").countDocuments({role:"donor"});
+    const totalUsers = await db
+      .collection("user")
+      .countDocuments({ role: "donor" });
     const totalRequests = await db.collection("requests").countDocuments();
+    const fundingAggregation = await db
+      .collection("fundings")
+      .aggregate([
+        {
+          $group: {
+            _id: null,
+            total: { $sum: { $toDouble: "$amount" } },
+          },
+        },
+      ])
+      .toArray();
 
-    const totalFunding = 1250;
+    const totalFunding =
+      fundingAggregation.length > 0 ? fundingAggregation[0].total : 0;
 
     return { totalUsers, totalRequests, totalFunding };
   } catch (e) {
@@ -25,12 +38,12 @@ async function getManagementStatistics() {
 }
 
 export default async function AdminVolunteerDashboardHome({ user }) {
-  const { totalUsers, totalRequests, totalFunding } = await getManagementStatistics();
+  const { totalUsers, totalRequests, totalFunding } =
+    await getManagementStatistics();
   const role = user?.role || "volunteer";
 
   return (
     <div className="space-y-8">
-     
       <div className="relative bg-gradient-to-r from-[#D62828] to-[#9B1C1C] rounded-2xl p-8 text-white shadow-xl overflow-hidden flex justify-between items-center">
         <div className="space-y-2 z-10">
           <span className="text-xs font-bold tracking-widest uppercase bg-white/20 px-3 py-1 rounded-full capitalize">
@@ -43,15 +56,10 @@ export default async function AdminVolunteerDashboardHome({ user }) {
             System Monitoring Overview Active
           </p>
         </div>
-        <div className="absolute -right-10 -bottom-10 text-white/5 font-black text-9xl pointer-events-none">
-          
-        </div>
+        <div className="absolute -right-10 -bottom-10 text-white/5 font-black text-9xl pointer-events-none"></div>
       </div>
 
-      
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        
-        
         <Card className="p-6 border border-zinc-100 shadow-sm flex flex-row items-center justify-between gap-4 bg-white rounded-2xl">
           <div className="space-y-1">
             <span className="text-xs font-bold text-zinc-400 uppercase tracking-wider block">
@@ -66,7 +74,6 @@ export default async function AdminVolunteerDashboardHome({ user }) {
           </div>
         </Card>
 
-        
         <Card className="p-6 border border-zinc-100 shadow-sm flex flex-row items-center justify-between gap-4 bg-white rounded-2xl">
           <div className="space-y-1">
             <span className="text-xs font-bold text-zinc-400 uppercase tracking-wider block">
@@ -81,7 +88,6 @@ export default async function AdminVolunteerDashboardHome({ user }) {
           </div>
         </Card>
 
-       
         <Card className="p-6 border border-zinc-100 shadow-sm flex flex-row items-center justify-between gap-4 bg-white rounded-2xl">
           <div className="space-y-1">
             <span className="text-xs font-bold text-zinc-400 uppercase tracking-wider block">
@@ -95,7 +101,6 @@ export default async function AdminVolunteerDashboardHome({ user }) {
             <HeartPulse className="h-6 w-6 stroke-[2.2]" />
           </div>
         </Card>
-
       </div>
     </div>
   );
