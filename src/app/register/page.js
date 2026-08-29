@@ -7,10 +7,12 @@ import toast from "react-hot-toast";
 import districts from "@/data/districts.json";
 import upazilas from "@/data/upazilas.json";
 import { authClient } from "@/lib/auth-client";
+import { useRouter } from "next/navigation";
 
 const bloodGroups = ["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"];
 
 export default function RegisterPage() {
+  const router = useRouter();
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -136,6 +138,7 @@ export default function RegisterPage() {
       console.log("Registration successful:", data);
 
       toast.success("Account created successfully!");
+      router.push("/login");
     } catch (error) {
       console.error("Registration failed:", error);
       toast.error("Something went wrong. Please try again.");
