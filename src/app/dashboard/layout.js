@@ -49,6 +49,48 @@ const menuItems = [
     ),
   },
   {
+    label: "All Blood Donation Requests",
+    href: "/dashboard/all-blood-donation-request",
+    adminOnly: true,
+    icon: (
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        fill="none"
+        viewBox="0 0 24 24"
+        strokeWidth="1.8"
+        stroke="currentColor"
+        className="h-5 w-5"
+      >
+        <path
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          d="M12 21s-7.5-4.35-7.5-10.125A4.875 4.875 0 0 1 12 7.5a4.875 4.875 0 0 1 7.5 3.375C19.5 16.65 12 21 12 21Z"
+        />
+      </svg>
+    ),
+  },
+  {
+    label: "All Users",
+    href: "/dashboard/all-users",
+    adminOnly: true,
+    icon: (
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        fill="none"
+        viewBox="0 0 24 24"
+        strokeWidth="1.8"
+        stroke="currentColor"
+        className="h-5 w-5"
+      >
+        <path
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          d="M15 19.128a9.38 9.38 0 0 0 2.625.372 9.36 9.36 0 0 0 2.625-.372M15 19.128v-1.628a4.5 4.5 0 0 0-4.5-4.5h-3A4.5 4.5 0 0 0 3 17.5v1.628m12-7.628a4.5 4.5 0 1 0-9 0 4.5 4.5 0 0 0 9 0Zm6.75 7.628v-1.628a4.5 4.5 0 0 0-3.375-4.357M18 8.25a3.75 3.75 0 1 0-7.5 0"
+        />
+      </svg>
+    ),
+  },
+  {
     label: "Create Request",
     href: "/donation-requests/create",
     icon: (
@@ -93,6 +135,7 @@ const menuItems = [
 export default function DashboardLayout({ children }) {
   const pathname = usePathname();
   const router = useRouter();
+  const { data: session, isPending: sessionLoading } = authClient.useSession();
 
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [loggingOut, setLoggingOut] = useState(false);
@@ -215,28 +258,32 @@ export default function DashboardLayout({ children }) {
             Menu
           </p>
 
-          {menuItems.map((item) => {
-            const isActive =
-              item.href === "/dashboard"
-                ? pathname === "/dashboard"
-                : pathname.startsWith(item.href);
+          {menuItems
+            .filter(
+              (item) => !item.adminOnly || session?.user?.role === "admin",
+            )
+            .map((item) => {
+              const isActive =
+                item.href === "/dashboard"
+                  ? pathname === "/dashboard"
+                  : pathname.startsWith(item.href);
 
-            return (
-              <Link
-                key={item.href}
-                href={item.href}
-                onClick={() => setSidebarOpen(false)}
-                className={`flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-semibold transition-colors ${
-                  isActive
-                    ? "bg-red-50 text-red-600"
-                    : "text-slate-600 hover:bg-slate-50 hover:text-slate-900"
-                }`}
-              >
-                {item.icon}
-                {item.label}
-              </Link>
-            );
-          })}
+              return (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  onClick={() => setSidebarOpen(false)}
+                  className={`flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-semibold transition-colors ${
+                    isActive
+                      ? "bg-red-50 text-red-600"
+                      : "text-slate-600 hover:bg-slate-50 hover:text-slate-900"
+                  }`}
+                >
+                  {item.icon}
+                  {item.label}
+                </Link>
+              );
+            })}
         </nav>
 
         {/* Bottom */}

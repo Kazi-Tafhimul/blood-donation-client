@@ -8,8 +8,7 @@ import toast from "react-hot-toast";
 export default function AllUsersPage() {
   const router = useRouter();
 
-  const { data: session, isPending: sessionLoading } =
-    authClient.useSession();
+  const { data: session, isPending: sessionLoading } = authClient.useSession();
 
   const [users, setUsers] = useState([]);
 
@@ -63,9 +62,7 @@ export default function AllUsersPage() {
         const data = await response.json();
 
         if (!response.ok) {
-          throw new Error(
-            data.message || "Failed to fetch users",
-          );
+          throw new Error(data.message || "Failed to fetch users");
         }
 
         setUsers(data.users || []);
@@ -179,9 +176,7 @@ export default function AllUsersPage() {
       );
 
       toast.success(
-        role === "admin"
-          ? "User is now an admin"
-          : "User is now a volunteer",
+        role === "admin" ? "User is now an admin" : "User is now a volunteer",
       );
     } catch (error) {
       console.error("Role update error:", error);
@@ -212,9 +207,7 @@ export default function AllUsersPage() {
         {/* Header */}
         <div className="mb-6 flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
           <div>
-            <h1 className="text-2xl font-bold text-slate-800">
-              All Users
-            </h1>
+            <h1 className="text-2xl font-bold text-slate-800">All Users</h1>
 
             <p className="mt-1 text-sm text-slate-500">
               Manage users, roles and account status.
@@ -224,9 +217,7 @@ export default function AllUsersPage() {
           {/* Filter */}
           <select
             value={statusFilter}
-            onChange={(e) =>
-              handleFilterChange(e.target.value)
-            }
+            onChange={(e) => handleFilterChange(e.target.value)}
             className="rounded-xl border border-gray-200 bg-white px-4 py-3 text-sm font-medium text-slate-700 outline-none focus:border-red-400"
           >
             <option value="all">All Users</option>
@@ -289,10 +280,7 @@ export default function AllUsersPage() {
 
                 <tbody className="divide-y divide-gray-100">
                   {users.map((user) => (
-                    <tr
-                      key={user._id}
-                      className="transition hover:bg-gray-50"
-                    >
+                    <tr key={user._id} className="transition hover:bg-gray-50">
                       {/* User */}
                       <td className="px-6 py-4">
                         <div className="flex items-center gap-3">
@@ -304,9 +292,7 @@ export default function AllUsersPage() {
                             />
                           ) : (
                             <div className="flex h-11 w-11 items-center justify-center rounded-full bg-red-50 font-bold text-red-500">
-                              {user.name
-                                ?.charAt(0)
-                                ?.toUpperCase() || "U"}
+                              {user.name?.charAt(0)?.toUpperCase() || "U"}
                             </div>
                           )}
 
@@ -361,14 +347,9 @@ export default function AllUsersPage() {
                           {user.status === "blocked" ? (
                             <button
                               type="button"
-                              disabled={
-                                actionLoading === user._id
-                              }
+                              disabled={actionLoading === user._id}
                               onClick={() =>
-                                handleStatusChange(
-                                  user._id,
-                                  "active",
-                                )
+                                handleStatusChange(user._id, "active")
                               }
                               className="rounded-lg bg-green-50 px-3 py-2 text-xs font-semibold text-green-600 transition hover:bg-green-100 disabled:opacity-50"
                             >
@@ -377,14 +358,9 @@ export default function AllUsersPage() {
                           ) : (
                             <button
                               type="button"
-                              disabled={
-                                actionLoading === user._id
-                              }
+                              disabled={actionLoading === user._id}
                               onClick={() =>
-                                handleStatusChange(
-                                  user._id,
-                                  "blocked",
-                                )
+                                handleStatusChange(user._id, "blocked")
                               }
                               className="rounded-lg bg-red-50 px-3 py-2 text-xs font-semibold text-red-600 transition hover:bg-red-100 disabled:opacity-50"
                             >
@@ -396,14 +372,9 @@ export default function AllUsersPage() {
                             <>
                               <button
                                 type="button"
-                                disabled={
-                                  actionLoading === user._id
-                                }
+                                disabled={actionLoading === user._id}
                                 onClick={() =>
-                                  handleRoleChange(
-                                    user._id,
-                                    "volunteer",
-                                  )
+                                  handleRoleChange(user._id, "volunteer")
                                 }
                                 className="rounded-lg bg-blue-50 px-3 py-2 text-xs font-semibold text-blue-600 transition hover:bg-blue-100 disabled:opacity-50"
                               >
@@ -412,14 +383,9 @@ export default function AllUsersPage() {
 
                               <button
                                 type="button"
-                                disabled={
-                                  actionLoading === user._id
-                                }
+                                disabled={actionLoading === user._id}
                                 onClick={() =>
-                                  handleRoleChange(
-                                    user._id,
-                                    "admin",
-                                  )
+                                  handleRoleChange(user._id, "admin")
                                 }
                                 className="rounded-lg bg-purple-50 px-3 py-2 text-xs font-semibold text-purple-600 transition hover:bg-purple-100 disabled:opacity-50"
                               >
@@ -431,14 +397,9 @@ export default function AllUsersPage() {
                           {user.role === "volunteer" && (
                             <button
                               type="button"
-                              disabled={
-                                actionLoading === user._id
-                              }
+                              disabled={actionLoading === user._id}
                               onClick={() =>
-                                handleRoleChange(
-                                  user._id,
-                                  "admin",
-                                )
+                                handleRoleChange(user._id, "admin")
                               }
                               className="rounded-lg bg-purple-50 px-3 py-2 text-xs font-semibold text-purple-600 transition hover:bg-purple-100 disabled:opacity-50"
                             >
@@ -465,9 +426,7 @@ export default function AllUsersPage() {
                 <button
                   type="button"
                   disabled={page === 1}
-                  onClick={() =>
-                    setPage((prev) => prev - 1)
-                  }
+                  onClick={() => setPage((prev) => prev - 1)}
                   className="rounded-lg border border-gray-200 bg-white px-4 py-2 text-sm font-medium text-slate-600 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-40"
                 >
                   Previous
@@ -476,9 +435,7 @@ export default function AllUsersPage() {
                 <button
                   type="button"
                   disabled={page === totalPages}
-                  onClick={() =>
-                    setPage((prev) => prev + 1)
-                  }
+                  onClick={() => setPage((prev) => prev + 1)}
                   className="rounded-lg border border-gray-200 bg-white px-4 py-2 text-sm font-medium text-slate-600 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-40"
                 >
                   Next
