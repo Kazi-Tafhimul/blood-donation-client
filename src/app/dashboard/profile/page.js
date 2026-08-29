@@ -256,6 +256,7 @@ export default function ProfilePage() {
       }
 
       const updatedUser = data.user;
+      console.log("UPDATED USER:", updatedUser);
 
       const updatedProfile = {
         name: updatedUser.name || "",
@@ -268,6 +269,8 @@ export default function ProfilePage() {
 
       setProfile(updatedProfile);
       setFormData(updatedProfile);
+      window.dispatchEvent(new Event("profile-updated"));
+      
 
       // Return to initial non-editable state
       setEditing(false);

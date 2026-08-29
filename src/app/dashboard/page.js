@@ -23,6 +23,7 @@ export default function DashboardPage() {
 
   const user = session?.user;
   const userRole = user?.role;
+  const [profileName, setProfileName] = useState("");
 
   const roleLabel =
     userRole === "admin"
@@ -122,13 +123,36 @@ export default function DashboardPage() {
   useEffect(() => {
     if (sessionLoading) return;
     if (!session?.user) return;
+    const loadProfileName = async () => {
+      try {
+        const tokenResult = await authClient.token();
+
+        if (!tokenResult.data?.token) return;
+
+        const response = await fetch(`${API_URL}/profile`, {
+          headers: {
+            Authorization: `Bearer ${tokenResult.data.token}`,
+          },
+        });
+
+        const data = await response.json();
+
+        if (response.ok && data.name) {
+          setProfileName(data.name);
+        }
+      } catch (error) {
+        console.error("Dashboard profile fetch error:", error);
+      }
+    };
+
+    loadProfileName();
 
     if (userRole === "admin" || userRole === "volunteer") {
       getDashboardStats();
     } else if (userRole === "donor") {
       getRecentRequests();
     }
-  }, [sessionLoading, session?.user?.id, userRole]);
+  }, [sessionLoading, session?.user?.id, userRole, profileName]);
 
   // =========================
   // SESSION LOADING
@@ -155,7 +179,7 @@ export default function DashboardPage() {
             <p className="mb-2 text-sm font-medium text-red-100">{roleLabel}</p>
 
             <h1 className="text-2xl font-bold sm:text-3xl">
-              Welcome back, {user?.name || "User"}!
+             Welcome back, {profileName || user?.name || "User"}!
             </h1>
 
             <p className="mt-2 max-w-2xl text-sm leading-6 text-red-100 sm:text-base">
@@ -169,8 +193,6 @@ export default function DashboardPage() {
           </div>
         </div>
       </section>
-
-    
 
       {(userRole === "admin" || userRole === "volunteer") && (
         <section>
