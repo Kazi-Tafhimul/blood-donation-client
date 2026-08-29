@@ -37,55 +37,92 @@ export default function CreateDonationRequestPage() {
     }));
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
+ const handleSubmit = async (e) => {
+  e.preventDefault();
 
-    const newErrors = {};
+  const newErrors = {};
 
-    if (!formData.recipientName.trim()) {
-      newErrors.recipientName = "Recipient name is required";
-    }
+  if (!formData.recipientName.trim()) {
+    newErrors.recipientName = "Recipient name is required";
+  }
 
-    if (!formData.bloodGroup) {
-      newErrors.bloodGroup = "Blood group is required";
-    }
+  if (!formData.bloodGroup) {
+    newErrors.bloodGroup = "Blood group is required";
+  }
 
-    if (!formData.district) {
-      newErrors.district = "District is required";
-    }
+  if (!formData.district) {
+    newErrors.district = "District is required";
+  }
 
-    if (!formData.upazila) {
-      newErrors.upazila = "Upazila is required";
-    }
+  if (!formData.upazila) {
+    newErrors.upazila = "Upazila is required";
+  }
 
-    if (!formData.hospitalName.trim()) {
-      newErrors.hospitalName = "Hospital name is required";
-    }
+  if (!formData.hospitalName.trim()) {
+    newErrors.hospitalName = "Hospital name is required";
+  }
 
-    if (!formData.fullAddress.trim()) {
-      newErrors.fullAddress = "Full address is required";
-    }
+  if (!formData.fullAddress.trim()) {
+    newErrors.fullAddress = "Full address is required";
+  }
 
-    if (!formData.donationDate) {
-      newErrors.donationDate = "Required date is required";
-    }
+  if (!formData.donationDate) {
+    newErrors.donationDate = "Required date is required";
+  }
 
-    if (!formData.donationTime) {
-      newErrors.donationTime = "Required time is required";
-    }
+  if (!formData.donationTime) {
+    newErrors.donationTime = "Required time is required";
+  }
 
-    if (!formData.requestMessage.trim()) {
-      newErrors.requestMessage = "Request message is required";
-    }
+  if (!formData.requestMessage.trim()) {
+    newErrors.requestMessage = "Request message is required";
+  }
 
-    setErrors(newErrors);
+  setErrors(newErrors);
 
-    if (Object.keys(newErrors).length > 0) {
+  if (Object.keys(newErrors).length > 0) {
+    return;
+  }
+
+  try {
+    const response = await fetch("/api/donation-requests", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(formData),
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      console.error("Donation request failed:", data);
+      alert(data.message || "Failed to create donation request.");
       return;
     }
 
-    console.log("Form is valid:", formData);
-  };
+    console.log("Donation request created:", data);
+
+    alert("Donation request created successfully!");
+
+    setFormData({
+      recipientName: "",
+      bloodGroup: "A+",
+      district: "",
+      upazila: "",
+      hospitalName: "",
+      fullAddress: "",
+      donationDate: "",
+      donationTime: "",
+      requestMessage: "",
+    });
+
+    setErrors({});
+  } catch (error) {
+    console.error("Create donation request error:", error);
+    alert("Something went wrong. Please try again.");
+  }
+};
 
   return (
     <div className="min-h-screen bg-gray-50 p-6">
