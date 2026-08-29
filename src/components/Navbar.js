@@ -108,7 +108,7 @@ export default function Navbar() {
           </Link>
 
           {/* Navigation */}
-          <div className="hidden items-center gap-8 md:flex">
+          <div className="hidden items-center gap-8 md:flex ">
             <Link
               href="/donation-requests"
               className="font-semibold text-slate-600 transition-colors hover:text-red-500"
@@ -149,34 +149,12 @@ export default function Navbar() {
   const user = session.user;
 
   return (
-    <nav className="border-b border-gray-200 bg-white px-6 py-3">
+    <nav className="border-b border-gray-200 bg-white px-4 py-3 sm:px-6">
       <div className="mx-auto flex max-w-7xl items-center justify-between">
         {/* Left side */}
-        <div className="flex items-center gap-6">
-          {/* Menu button */}
-          <button
-            type="button"
-            className="rounded-lg p-2 text-slate-700 transition-colors hover:bg-gray-100 focus:outline-none"
-            aria-label="Open menu"
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              strokeWidth="2"
-              stroke="currentColor"
-              className="h-6 w-6"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5"
-              />
-            </svg>
-          </button>
-
+        <div className="flex items-center gap-8">
           {/* Logo */}
-          <Link href="/" className="hidden items-center gap-3 sm:flex">
+          <Link href="/" className="flex items-center gap-3">
             <div className="flex h-9 w-9 items-center justify-center rounded-full bg-red-500 text-white">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -199,8 +177,8 @@ export default function Navbar() {
             </span>
           </Link>
 
-          {/* Desktop navigation */}
-          <div className="hidden items-center gap-6 lg:flex">
+          {/* Navigation */}
+          <div className="absolute left-1/2 hidden -translate-x-1/2 items-center gap-8 md:flex">
             <Link
               href="/donation-requests"
               className="font-semibold text-slate-600 transition-colors hover:text-red-500"
@@ -224,12 +202,12 @@ export default function Navbar() {
           </div>
         </div>
 
-        {/* Right actions */}
-        <div className="flex items-center gap-5">
+        {/* Right side */}
+        <div className="flex items-center gap-4">
           {/* Notification */}
           <button
             type="button"
-            className="relative rounded-lg p-1 text-slate-600 transition-colors hover:bg-gray-100 hover:text-slate-900 focus:outline-none"
+            className="relative rounded-lg p-2 text-slate-600 hover:bg-gray-100"
             aria-label="Notifications"
           >
             <svg
@@ -247,25 +225,22 @@ export default function Navbar() {
               />
             </svg>
 
-            <span className="absolute right-0 top-0 h-2.5 w-2.5 rounded-full border-2 border-white bg-red-500" />
+            <span className="absolute right-1 top-1 h-2.5 w-2.5 rounded-full border-2 border-white bg-red-500" />
           </button>
 
-          {/* Avatar + Dropdown */}
+          {/* User */}
           <div className="relative">
             <button
               type="button"
               onClick={() => setIsMenuOpen((prev) => !prev)}
-              title={user.name || user.email}
-              aria-label="Open user menu"
-              aria-expanded={isMenuOpen}
-              className="flex h-10 w-10 items-center justify-center rounded-full bg-red-500 text-sm font-bold tracking-wider text-white shadow-sm transition-colors hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-200"
+              className="flex h-10 w-10 items-center justify-center rounded-full bg-red-500 text-sm font-bold text-white hover:bg-red-600"
             >
               {getInitials(user.name)}
             </button>
 
             {isMenuOpen && (
               <>
-                {/* Click outside */}
+                {/* Overlay */}
                 <button
                   type="button"
                   aria-label="Close menu"
@@ -274,11 +249,11 @@ export default function Navbar() {
                 />
 
                 {/* Dropdown */}
-                <div className="absolute right-0 top-14 z-50 w-64 overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-xl">
+                <div className="absolute right-0 top-12 z-50 w-64 overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-xl">
                   {/* User info */}
                   <div className="border-b border-gray-100 px-4 py-4">
                     <div className="flex items-center gap-3">
-                      <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-red-500 text-sm font-bold text-white">
+                      <div className="flex h-11 w-11 items-center justify-center rounded-full bg-red-500 text-sm font-bold text-white">
                         {getInitials(user.name)}
                       </div>
 
@@ -294,50 +269,30 @@ export default function Navbar() {
                     </div>
                   </div>
 
-                  {/* Menu items */}
+                  {/* Dropdown menu */}
                   <div className="p-2">
                     <Link
                       href="/dashboard"
                       onClick={() => setIsMenuOpen(false)}
-                      className="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-semibold text-slate-700 transition-colors hover:bg-gray-50 hover:text-red-500"
+                      className="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-semibold text-slate-700 hover:bg-gray-50 hover:text-red-500"
                     >
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        strokeWidth="1.8"
-                        stroke="currentColor"
-                        className="h-5 w-5"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          d="M3 13.125h5.25V21H3v-7.875Zm6.375-10.125h5.25V21h-5.25V3Zm6.375 5.25H21V21h-5.25V8.25Z"
-                        />
-                      </svg>
                       Dashboard
                     </Link>
 
                     <Link
-                      href="/donation-requests"
+                      href="/dashboard/my-donation-requests"
                       onClick={() => setIsMenuOpen(false)}
-                      className="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-semibold text-slate-700 transition-colors hover:bg-gray-50 hover:text-red-500"
+                      className="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-semibold text-slate-700 hover:bg-gray-50 hover:text-red-500"
                     >
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        strokeWidth="1.8"
-                        stroke="currentColor"
-                        className="h-5 w-5"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          d="M12 21s-7.5-4.35-7.5-10.125A4.875 4.875 0 0 1 12 7.5a4.875 4.875 0 0 1 7.5 3.375C19.5 16.65 12 21 12 21Z"
-                        />
-                      </svg>
-                      Donation Requests
+                      My Donation Requests
+                    </Link>
+
+                    <Link
+                      href="/dashboard/profile"
+                      onClick={() => setIsMenuOpen(false)}
+                      className="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-semibold text-slate-700 hover:bg-gray-50 hover:text-red-500"
+                    >
+                      My Profile
                     </Link>
 
                     <div className="my-2 border-t border-gray-100" />
@@ -345,22 +300,8 @@ export default function Navbar() {
                     <button
                       type="button"
                       onClick={handleLogout}
-                      className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left text-sm font-semibold text-red-500 transition-colors hover:bg-red-50"
+                      className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left text-sm font-semibold text-red-500 hover:bg-red-50"
                     >
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        strokeWidth="1.8"
-                        stroke="currentColor"
-                        className="h-5 w-5"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          d="M15.75 9V5.25A2.25 2.25 0 0 0 13.5 3h-6a2.25 2.25 0 0 0-2.25 2.25v13.5A2.25 2.25 0 0 0 7.5 21h6a2.25 2.25 0 0 0 2.25-2.25V15m3-6 3 3m0 0-3 3m3-3H9"
-                        />
-                      </svg>
                       Logout
                     </button>
                   </div>
