@@ -295,14 +295,12 @@ export default function DonationRequestsPage() {
                     </div>
 
                     {/* Details Button */}
-                    <Button
-                      as={Link}
+                    <Link
                       href={`/donation-requests/${request._id}`}
-                      variant="secondary"
-                      className="mt-6 w-full rounded-xl font-semibold"
+                      className="mt-6 flex w-full items-center justify-center rounded-xl bg-gray-900 px-4 py-3 text-sm font-semibold text-white transition hover:bg-gray-800"
                     >
                       View Details
-                    </Button>
+                    </Link>
                   </Card.Content>
                 </Card>
               ))}
