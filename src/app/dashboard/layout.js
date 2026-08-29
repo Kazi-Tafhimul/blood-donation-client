@@ -165,9 +165,9 @@ export default function DashboardLayout({ children }) {
 
       {/* Sidebar */}
       <aside
-        className={`fixed inset-y-0 left-0 z-50 flex w-72 flex-col border-r border-slate-200 bg-white transition-transform duration-300 lg:translate-x-0 ${
+        className={`fixed inset-y-0 left-0 z-50 flex w-72 flex-col border-r border-slate-200 bg-white transition-transform duration-300 ${
           sidebarOpen ? "translate-x-0" : "-translate-x-full"
-        }`}
+        } lg:translate-x-0`}
       >
         {/* Logo */}
         <div className="flex h-20 items-center justify-between border-b border-slate-100 px-6">
@@ -198,10 +198,11 @@ export default function DashboardLayout({ children }) {
             </span>
           </Link>
 
+          {/* Close button - mobile only */}
           <button
             type="button"
             onClick={() => setSidebarOpen(false)}
-            className="rounded-lg p-2 text-slate-500 hover:bg-slate-100 lg:hidden"
+            className="rounded-lg p-2 text-2xl text-slate-500 hover:bg-slate-100 lg:hidden"
             aria-label="Close sidebar"
           >
             ×
@@ -259,7 +260,6 @@ export default function DashboardLayout({ children }) {
                 d="m2.25 12 9.75-9.75L21.75 12M4.5 10.5v9.75h15V10.5"
               />
             </svg>
-
             Back to Home
           </Link>
 
