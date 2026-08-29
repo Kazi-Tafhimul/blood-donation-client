@@ -6,17 +6,9 @@ import toast from "react-hot-toast";
 
 import districts from "@/data/districts.json";
 import upazilas from "@/data/upazilas.json";
+import { authClient } from "@/lib/auth-client";
 
-const bloodGroups = [
-  "A+",
-  "A-",
-  "B+",
-  "B-",
-  "AB+",
-  "AB-",
-  "O+",
-  "O-",
-];
+const bloodGroups = ["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"];
 
 export default function RegisterPage() {
   const [formData, setFormData] = useState({
@@ -81,7 +73,7 @@ export default function RegisterPage() {
     }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     const newErrors = {};
@@ -125,8 +117,29 @@ export default function RegisterPage() {
       return;
     }
 
-    console.log("Register form:", formData);
-    toast.success("Form validation successful");
+    try {
+      const { data, error } = await authClient.signUp.email({
+        name: formData.name,
+        email: formData.email,
+        password: formData.password,
+        bloodGroup: formData.bloodGroup,
+        district: formData.district,
+        upazila: formData.upazila,
+      });
+
+      if (error) {
+        console.error("Registration error:", error);
+        toast.error(error.message || "Registration failed");
+        return;
+      }
+
+      console.log("Registration successful:", data);
+
+      toast.success("Account created successfully!");
+    } catch (error) {
+      console.error("Registration failed:", error);
+      toast.error("Something went wrong. Please try again.");
+    }
   };
 
   return (
@@ -253,9 +266,7 @@ export default function RegisterPage() {
               </select>
 
               {errors.bloodGroup && (
-                <p className="mt-1 text-sm text-red-500">
-                  {errors.bloodGroup}
-                </p>
+                <p className="mt-1 text-sm text-red-500">{errors.bloodGroup}</p>
               )}
             </div>
 
@@ -280,9 +291,7 @@ export default function RegisterPage() {
               </select>
 
               {errors.district && (
-                <p className="mt-1 text-sm text-red-500">
-                  {errors.district}
-                </p>
+                <p className="mt-1 text-sm text-red-500">{errors.district}</p>
               )}
             </div>
 
@@ -334,9 +343,7 @@ export default function RegisterPage() {
               />
 
               {errors.password && (
-                <p className="mt-1 text-sm text-red-500">
-                  {errors.password}
-                </p>
+                <p className="mt-1 text-sm text-red-500">{errors.password}</p>
               )}
             </div>
 

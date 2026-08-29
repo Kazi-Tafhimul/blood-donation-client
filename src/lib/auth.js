@@ -21,22 +21,35 @@ export const auth = betterAuth({
   },
 
   user: {
-    additionalFields: {
-      role: {
-        type: "string",
-        required: true,
-        defaultValue: "donor",
-        input: false,
-      },
+  additionalFields: {
+    role: {
+      type: "string",
+      defaultValue: "donor",
+      input: false,
+    },
 
-      status: {
-        type: "string",
-        required: true,
-        defaultValue: "active",
-        input: false,
-      },
+    status: {
+      type: "string",
+      defaultValue: "active",
+      input: false,
+    },
+
+    bloodGroup: {
+      type: "string",
+      required: true,
+    },
+
+    district: {
+      type: "string",
+      required: true,
+    },
+
+    upazila: {
+      type: "string",
+      required: true,
     },
   },
+},
 
   plugins: [
     jwt(),
