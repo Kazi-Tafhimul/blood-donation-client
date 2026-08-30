@@ -43,7 +43,7 @@ export default function AllBloodDonationRequestPage() {
       }
 
       // Frontend protection
-      if (session.user.role !== "admin") {
+      if (session.user.role !== "admin" && session.user.role !== "volunteer") {
         toast.error("You are not authorized to access this page.");
         router.push("/dashboard");
         return;
@@ -507,7 +507,8 @@ export default function AllBloodDonationRequestPage() {
                           </Link>
 
                           {/* Edit */}
-                          {request.status !== "done" &&
+                          {session.user.role === "admin" &&
+                            request.status !== "done" &&
                             request.status !== "canceled" && (
                               <Link
                                 href={`/dashboard/my-donation-requests/${request._id}/edit`}
@@ -518,7 +519,8 @@ export default function AllBloodDonationRequestPage() {
                             )}
 
                           {/* Delete */}
-                          {request.status !== "done" &&
+                          {session.user.role === "admin" &&
+                            request.status !== "done" &&
                             request.status !== "canceled" && (
                               <button
                                 type="button"
