@@ -66,7 +66,6 @@ export default function DonationRequestsPage() {
   return (
     <main className="min-h-screen bg-gray-50/50 pb-16">
       <div className="mx-auto max-w-6xl px-6 py-10">
-        {/* Header */}
         <section className="mb-8">
           <h1 className="text-3xl font-bold tracking-tight text-gray-900 md:text-4xl">
             Blood Donation Requests
@@ -77,39 +76,8 @@ export default function DonationRequestsPage() {
           </p>
         </section>
 
-        {/* Search */}
-        <section className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-          <Input
-            value={search}
-            onValueChange={setSearch}
-            placeholder="Search by name or blood group..."
-            variant="bordered"
-            size="lg"
-            className="w-full sm:max-w-md"
-            startContent={
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                strokeWidth="1.8"
-                stroke="currentColor"
-                className="h-5 w-5 text-gray-400"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z"
-                />
-              </svg>
-            }
-          />
+       
 
-          <Chip color="danger" variant="flat" size="lg" className="w-fit">
-            {filteredRequests.length} Pending
-          </Chip>
-        </section>
-
-        {/* Loading */}
         {loading && (
           <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
             {[1, 2, 3, 4].map((item) => (
@@ -133,7 +101,6 @@ export default function DonationRequestsPage() {
           </div>
         )}
 
-        {/* Empty State */}
         {!loading && filteredRequests.length === 0 && (
           <Card className="rounded-2xl border border-gray-200 shadow-sm">
             <Card.Content className="flex flex-col items-center justify-center px-6 py-16 text-center">
@@ -167,7 +134,6 @@ export default function DonationRequestsPage() {
           </Card>
         )}
 
-        {/* Requests */}
         {!loading && visibleRequests.length > 0 && (
           <>
             <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
@@ -176,11 +142,9 @@ export default function DonationRequestsPage() {
                   key={request._id}
                   className="overflow-hidden rounded-2xl border border-gray-200 shadow-sm transition-shadow duration-200 hover:shadow-md"
                 >
-                  {/* Red top border */}
                   <div className="h-1.5 w-full bg-red-500" />
 
                   <Card.Content className="p-6">
-                    {/* Header */}
                     <div className="flex items-start justify-between gap-4">
                       <div>
                         <h2 className="text-xl font-bold text-gray-900">
@@ -197,15 +161,12 @@ export default function DonationRequestsPage() {
                         </Chip>
                       </div>
 
-                      {/* Blood Group */}
                       <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-red-100 bg-red-50 text-sm font-bold text-red-500">
                         {request.bloodGroup}
                       </div>
                     </div>
 
-                    {/* Details */}
                     <div className="mt-6 space-y-3 text-sm text-gray-500">
-                      {/* Location */}
                       <div className="flex items-center gap-3">
                         <svg
                           xmlns="http://www.w3.org/2000/svg"
@@ -232,7 +193,6 @@ export default function DonationRequestsPage() {
                         </span>
                       </div>
 
-                      {/* Hospital */}
                       <div className="flex items-center gap-3">
                         <svg
                           xmlns="http://www.w3.org/2000/svg"
@@ -252,7 +212,6 @@ export default function DonationRequestsPage() {
                         <span>{request.hospitalName}</span>
                       </div>
 
-                      {/* Date & Time */}
                       <div className="flex flex-wrap items-center gap-x-6 gap-y-3 pt-1">
                         <div className="flex items-center gap-3">
                           <svg
@@ -294,7 +253,6 @@ export default function DonationRequestsPage() {
                       </div>
                     </div>
 
-                    {/* Details Button */}
                     <Link
                       href={`/donation-requests/${request._id}`}
                       className="mt-6 flex w-full items-center justify-center rounded-xl bg-gray-900 px-4 py-3 text-sm font-semibold text-white transition hover:bg-gray-800"
@@ -306,7 +264,6 @@ export default function DonationRequestsPage() {
               ))}
             </div>
 
-            {/* See More */}
             {filteredRequests.length > INITIAL_VISIBLE_COUNT && (
               <div className="mt-8 flex justify-center">
                 <Button

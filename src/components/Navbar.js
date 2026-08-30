@@ -11,7 +11,6 @@ export default function Navbar() {
   const router = useRouter();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
-  // Better Auth reactive session
   const { data: session, isPending: loading } = authClient.useSession();
   const [profileName, setProfileName] = useState("");
   const [profileUpdated, setProfileUpdated] = useState(0);
@@ -59,9 +58,6 @@ export default function Navbar() {
     };
   }, [session]);
 
-  // console.log("NAVBAR SESSION:", session);
-  // console.log("NAVBAR RENDER USER:", session?.user?.name);
-
   const handleLogout = async () => {
     try {
       const { error } = await authClient.signOut();
@@ -96,7 +92,6 @@ export default function Navbar() {
     );
   };
 
-  // Loading state
   if (loading) {
     return (
       <nav className="flex h-[73px] items-center justify-between border-b border-gray-200 bg-white px-6">
@@ -126,12 +121,10 @@ export default function Navbar() {
     );
   }
 
-  // Logged out navbar
   if (!session?.user) {
     return (
       <nav className="border-b border-gray-200 bg-white px-6 py-4 md:px-8">
         <div className="mx-auto flex max-w-7xl items-center justify-between">
-          {/* Logo */}
           <Link href="/" className="flex items-center gap-3">
             <div className="flex h-10 w-10 items-center justify-center rounded-full bg-red-500 text-white shadow-sm">
               <svg
@@ -155,7 +148,6 @@ export default function Navbar() {
             </span>
           </Link>
 
-          {/* Navigation */}
           <div className="hidden items-center gap-8 md:flex ">
             <Link
               href="/donation-requests"
@@ -172,7 +164,6 @@ export default function Navbar() {
             </Link>
           </div>
 
-          {/* Actions */}
           <div className="flex items-center gap-3 md:gap-6">
             <Link
               href="/login"
@@ -193,18 +184,14 @@ export default function Navbar() {
     );
   }
 
-  // Logged in user
   const user = session.user;
 
   const displayName = profileName || user.name || "User";
-  // console.log("NAVBAR DISPLAY NAME:", displayName);
 
   return (
     <nav className="border-b border-gray-200 bg-white px-4 py-3 sm:px-6">
       <div className="mx-auto flex max-w-7xl items-center justify-between">
-        {/* Left side */}
         <div className="flex items-center gap-8">
-          {/* Logo */}
           <Link href="/" className="flex items-center gap-3">
             <div className="flex h-9 w-9 items-center justify-center rounded-full bg-red-500 text-white">
               <svg
@@ -228,7 +215,6 @@ export default function Navbar() {
             </span>
           </Link>
 
-          {/* Navigation */}
           <div className="absolute left-1/2 hidden -translate-x-1/2 items-center gap-8 md:flex">
             <Link
               href="/donation-requests"
@@ -253,9 +239,7 @@ export default function Navbar() {
           </div>
         </div>
 
-        {/* Right side */}
         <div className="flex items-center gap-4">
-          {/* Notification */}
           <button
             type="button"
             className="relative rounded-lg p-2 text-slate-600 hover:bg-gray-100"
@@ -279,7 +263,6 @@ export default function Navbar() {
             <span className="absolute right-1 top-1 h-2.5 w-2.5 rounded-full border-2 border-white bg-red-500" />
           </button>
 
-          {/* User */}
           <div className="relative">
             <button
               type="button"
@@ -299,7 +282,6 @@ export default function Navbar() {
 
             {isMenuOpen && (
               <>
-                {/* Overlay */}
                 <button
                   type="button"
                   aria-label="Close menu"
@@ -307,9 +289,7 @@ export default function Navbar() {
                   onClick={() => setIsMenuOpen(false)}
                 />
 
-                {/* Dropdown */}
                 <div className="absolute right-0 top-12 z-50 w-64 overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-xl">
-                  {/* User info */}
                   <div className="border-b border-gray-100 px-4 py-4">
                     <div className="flex items-center gap-3">
                       <div className="flex h-11 w-11 shrink-0 items-center justify-center overflow-hidden rounded-full bg-red-500 text-sm font-bold text-white">
@@ -336,7 +316,6 @@ export default function Navbar() {
                     </div>
                   </div>
 
-                  {/* Dropdown menu */}
                   <div className="p-2">
                     <Link
                       href="/dashboard"

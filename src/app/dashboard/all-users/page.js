@@ -205,7 +205,6 @@ export default function AllUsersPage() {
   return (
     <div className="min-h-screen bg-gray-50 p-6">
       <div className="mx-auto max-w-7xl">
-        {/* Header */}
         <div className="mb-6 flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
           <div>
             <h1 className="text-2xl font-bold text-slate-800">All Users</h1>
@@ -215,7 +214,6 @@ export default function AllUsersPage() {
             </p>
           </div>
 
-          {/* Filter */}
           <select
             value={statusFilter}
             onChange={(e) => handleFilterChange(e.target.value)}
@@ -227,7 +225,6 @@ export default function AllUsersPage() {
           </select>
         </div>
 
-        {/* Table */}
         <div className="overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-sm">
           {loading ? (
             <div className="p-8">
@@ -242,7 +239,9 @@ export default function AllUsersPage() {
             </div>
           ) : users.length === 0 ? (
             <div className="p-12 text-center">
-              <div className="text-4xl"><FaUserCircle/></div>
+              <div className="text-4xl">
+                <FaUserCircle />
+              </div>
 
               <h2 className="mt-4 font-semibold text-slate-800">
                 No users found
@@ -282,7 +281,6 @@ export default function AllUsersPage() {
                 <tbody className="divide-y divide-gray-100">
                   {users.map((user) => (
                     <tr key={user._id} className="transition hover:bg-gray-50">
-                      {/* User */}
                       <td className="px-6 py-4">
                         <div className="flex items-center gap-3">
                           {user.image ? (
@@ -309,12 +307,10 @@ export default function AllUsersPage() {
                         </div>
                       </td>
 
-                      {/* Email */}
                       <td className="px-6 py-4 text-sm text-slate-600">
                         {user.email}
                       </td>
 
-                      {/* Role */}
                       <td className="px-6 py-4">
                         <span
                           className={`rounded-full px-3 py-1 text-xs font-semibold ${
@@ -329,7 +325,6 @@ export default function AllUsersPage() {
                         </span>
                       </td>
 
-                      {/* Status */}
                       <td className="px-6 py-4">
                         <span
                           className={`rounded-full px-3 py-1 text-xs font-semibold ${
@@ -342,7 +337,6 @@ export default function AllUsersPage() {
                         </span>
                       </td>
 
-                      {/* Actions */}
                       <td className="px-6 py-4 text-right">
                         <div className="flex justify-end gap-2">
                           {user.status === "blocked" ? (
@@ -416,7 +410,6 @@ export default function AllUsersPage() {
             </div>
           )}
 
-          {/* Pagination */}
           {!loading && users.length > 0 && (
             <div className="flex items-center justify-between border-t border-gray-100 px-6 py-4">
               <p className="text-sm text-slate-500">

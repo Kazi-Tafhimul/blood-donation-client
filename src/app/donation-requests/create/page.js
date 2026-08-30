@@ -6,6 +6,8 @@ import districts from "@/data/districts.json";
 import upazilas from "@/data/upazilas.json";
 import { authClient } from "@/lib/auth-client";
 import toast from "react-hot-toast";
+import { FaHandHoldingHeart, FaUserCircle } from "react-icons/fa";
+import { MdOutlineMedicalInformation } from "react-icons/md";
 
 export default function CreateDonationRequestPage() {
   const router = useRouter();
@@ -128,11 +130,14 @@ export default function CreateDonationRequestPage() {
       const data = await response.json();
 
       if (!response.ok) {
-       toast.error("Your account is blocked. You cannot create donation requests.")
+        toast.error(
+          "Your account is blocked. You cannot create donation requests.",
+        );
         return;
       }
+      toast.success("Donation request created successfully!") 
 
-      alert("Donation request created successfully!");
+     // alert("Donation request created successfully!");
 
       router.push("/donation-requests");
     } catch (error) {
@@ -157,10 +162,11 @@ export default function CreateDonationRequestPage() {
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-6">
-          {/* Requester Information */}
           <div className="space-y-4 rounded-2xl border border-gray-100 bg-white p-6 shadow-sm">
             <div className="mb-2 flex items-center gap-2 font-semibold text-red-500">
-              <span className="text-xl">👤</span>
+              <span className="text-xl">
+                <FaUserCircle />
+              </span>
               <span>Requester Information</span>
             </div>
 
@@ -193,15 +199,15 @@ export default function CreateDonationRequestPage() {
             </div>
           </div>
 
-          {/* Recipient Information */}
           <div className="space-y-4 rounded-2xl border border-gray-100 bg-white p-6 shadow-sm">
             <div className="mb-2 flex items-center gap-2 font-semibold text-red-500">
-              <span className="text-xl">❤️</span>
+              <span className="text-xl">
+                <FaHandHoldingHeart />
+              </span>
               <span>Recipient Information</span>
             </div>
 
             <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-              {/* Recipient Name */}
               <div>
                 <label className="mb-2 block text-sm font-semibold text-slate-700">
                   Recipient Name
@@ -223,7 +229,6 @@ export default function CreateDonationRequestPage() {
                 )}
               </div>
 
-              {/* Blood Group */}
               <div>
                 <label className="mb-2 block text-sm font-semibold text-slate-700">
                   Blood Group
@@ -252,7 +257,6 @@ export default function CreateDonationRequestPage() {
                 )}
               </div>
 
-              {/* District */}
               <div>
                 <label className="mb-2 block text-sm font-semibold text-slate-700">
                   District
@@ -278,7 +282,6 @@ export default function CreateDonationRequestPage() {
                 )}
               </div>
 
-              {/* Upazila */}
               <div>
                 <label className="mb-2 block text-sm font-semibold text-slate-700">
                   Upazila
@@ -304,7 +307,6 @@ export default function CreateDonationRequestPage() {
                 )}
               </div>
 
-              {/* Hospital Name */}
               <div>
                 <label className="mb-2 block text-sm font-semibold text-slate-700">
                   Hospital Name
@@ -326,7 +328,6 @@ export default function CreateDonationRequestPage() {
                 )}
               </div>
 
-              {/* Full Address */}
               <div>
                 <label className="mb-2 block text-sm font-semibold text-slate-700">
                   Full Address
@@ -348,7 +349,6 @@ export default function CreateDonationRequestPage() {
                 )}
               </div>
 
-              {/* Required Date */}
               <div>
                 <label className="mb-2 block text-sm font-semibold text-slate-700">
                   Required Date
@@ -369,7 +369,6 @@ export default function CreateDonationRequestPage() {
                 )}
               </div>
 
-              {/* Required Time */}
               <div>
                 <label className="mb-2 block text-sm font-semibold text-slate-700">
                   Required Time
@@ -392,10 +391,11 @@ export default function CreateDonationRequestPage() {
             </div>
           </div>
 
-          {/* Medical Information */}
           <div className="space-y-4 rounded-2xl border border-gray-100 bg-white p-6 shadow-sm">
             <div className="mb-2 flex items-center gap-2 font-semibold text-red-500">
-              <span className="text-xl">📄</span>
+              <span className="text-xl">
+                <MdOutlineMedicalInformation />
+              </span>
               <span>Medical Information</span>
             </div>
 
@@ -421,14 +421,15 @@ export default function CreateDonationRequestPage() {
             </div>
           </div>
 
-          {/* Submit */}
           <div>
             <button
               type="submit"
               disabled={submitting || isPending}
               className="inline-flex items-center justify-center gap-2 rounded-xl bg-red-600 px-6 py-3.5 font-medium text-white shadow-md transition-all duration-200 hover:bg-red-700 disabled:cursor-not-allowed disabled:opacity-60"
             >
-              <span>❤️</span>
+              <span>
+                <FaHandHoldingHeart />
+              </span>
 
               <span>
                 {submitting ? "Creating..." : "Create Donation Request"}

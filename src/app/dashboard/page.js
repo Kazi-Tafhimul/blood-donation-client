@@ -35,11 +35,6 @@ export default function DashboardPage() {
         ? "Volunteer Dashboard"
         : "Donor Dashboard";
 
-  // =========================
-  // GET DASHBOARD STATS
-  // Admin + Volunteer only
-  // =========================
-
   const getDashboardStats = async () => {
     try {
       setLoading(true);
@@ -78,11 +73,6 @@ export default function DashboardPage() {
     }
   };
 
-  // =========================
-  // GET DONOR RECENT REQUESTS
-  // Donor only
-  // =========================
-
   const getRecentRequests = async () => {
     try {
       setLoading(true);
@@ -107,8 +97,6 @@ export default function DashboardPage() {
         throw new Error(data.message || "Failed to fetch donation requests");
       }
 
-      // Backend already sorts by createdAt.
-      // We only need the latest 3 requests.
       setRecentRequests(Array.isArray(data) ? data.slice(0, 3) : []);
     } catch (error) {
       console.error("Recent donation requests error:", error);
@@ -118,10 +106,6 @@ export default function DashboardPage() {
       setLoading(false);
     }
   };
-
-  // =========================
-  // LOAD DASHBOARD DATA
-  // =========================
 
   useEffect(() => {
     if (sessionLoading) return;
@@ -157,10 +141,6 @@ export default function DashboardPage() {
     }
   }, [sessionLoading, session?.user?.id, userRole, profileName]);
 
-  // =========================
-  // SESSION LOADING
-  // =========================
-
   if (sessionLoading) {
     return (
       <div className="flex min-h-screen items-center justify-center">
@@ -169,20 +149,15 @@ export default function DashboardPage() {
     );
   }
 
-  // =========================
-  // DASHBOARD
-  // =========================
-
   return (
     <div className="mx-auto w-full max-w-7xl p-4 sm:p-6 lg:p-8">
-      {/* Welcome Section */}
       <section className="mb-8 overflow-hidden rounded-3xl bg-red-600 p-6 text-white shadow-sm sm:p-8">
         <div className="flex flex-col justify-between gap-6 md:flex-row md:items-center">
           <div>
             <p className="mb-2 text-sm font-medium text-red-100">{roleLabel}</p>
 
             <h1 className="text-2xl font-bold sm:text-3xl">
-             Welcome back, {profileName || user?.name || "User"}!
+              Welcome back, {profileName || user?.name || "User"}!
             </h1>
 
             <p className="mt-2 max-w-2xl text-sm leading-6 text-red-100 sm:text-base">
@@ -192,7 +167,7 @@ export default function DashboardPage() {
           </div>
 
           <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl bg-white/15 text-3xl backdrop-blur-sm">
-            <FaDroplet/>
+            <FaDroplet />
           </div>
         </div>
       </section>
@@ -226,7 +201,6 @@ export default function DashboardPage() {
             </div>
           ) : (
             <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-              {/* Total Donors */}
               <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md">
                 <div className="flex items-start justify-between">
                   <div>
@@ -244,12 +218,11 @@ export default function DashboardPage() {
                   </div>
 
                   <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-red-50 text-2xl">
-                    <FaUserCircle/>
+                    <FaUserCircle />
                   </div>
                 </div>
               </div>
 
-              {/* Total Funding */}
               <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md">
                 <div className="flex items-start justify-between">
                   <div>
@@ -267,13 +240,11 @@ export default function DashboardPage() {
                   </div>
 
                   <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-emerald-50 text-2xl">
-                    <TbMoneybagHeart/>
-
+                    <TbMoneybagHeart />
                   </div>
                 </div>
               </div>
 
-              {/* Total Requests */}
               <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md">
                 <div className="flex items-start justify-between">
                   <div>
@@ -291,7 +262,7 @@ export default function DashboardPage() {
                   </div>
 
                   <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-blue-50 text-2xl">
-                    <FaDroplet/>
+                    <FaDroplet />
                   </div>
                 </div>
               </div>
@@ -299,10 +270,6 @@ export default function DashboardPage() {
           )}
         </section>
       )}
-
-      {/* ===================================================== */}
-      {/* DONOR RECENT REQUESTS                                */}
-      {/* ===================================================== */}
 
       {userRole === "donor" && (
         <section>
@@ -337,7 +304,7 @@ export default function DashboardPage() {
           ) : recentRequests.length === 0 ? (
             <div className="rounded-2xl border border-slate-200 bg-white px-6 py-14 text-center shadow-sm">
               <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-red-50 text-2xl">
-                <FaDroplet/>
+                <FaDroplet />
               </div>
 
               <h3 className="mt-4 text-lg font-bold text-slate-900">
@@ -363,7 +330,6 @@ export default function DashboardPage() {
                   className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md"
                 >
                   <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-                    {/* Request Info */}
                     <div className="flex items-start gap-4">
                       <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-red-50 text-lg font-bold text-red-500">
                         {request.bloodGroup || "N/A"}
@@ -385,7 +351,6 @@ export default function DashboardPage() {
                       </div>
                     </div>
 
-                    {/* Date + Status + View */}
                     <div className="flex flex-wrap items-center gap-3 md:justify-end">
                       <div className="text-sm text-slate-500">
                         <span className="font-medium">
@@ -418,10 +383,6 @@ export default function DashboardPage() {
     </div>
   );
 }
-
-// =========================
-// STATUS BADGE
-// =========================
 
 function StatusBadge({ status }) {
   const config = {

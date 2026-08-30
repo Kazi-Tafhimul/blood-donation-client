@@ -175,7 +175,7 @@ export default function RegisterPage() {
   return (
     <main className="min-h-screen bg-gray-50 px-6 py-10">
       <div className="mx-auto w-full max-w-2xl rounded-3xl border border-gray-100 bg-white p-8 shadow-sm">
-        {/* Header */}
+       
         <div className="mb-8 text-center">
           <h1 className="mb-2 text-3xl font-bold text-slate-900">
             Create Account
@@ -187,7 +187,7 @@ export default function RegisterPage() {
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-6">
-          {/* Name & Email */}
+          
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
             <div>
               <label className="mb-2 block text-sm font-semibold text-slate-700">
@@ -228,7 +228,7 @@ export default function RegisterPage() {
             </div>
           </div>
 
-          {/* Profile Photo */}
+         
           <div>
             <label className="mb-2 block text-sm font-semibold text-slate-700">
               Profile Photo
@@ -273,7 +273,7 @@ export default function RegisterPage() {
             </label>
           </div>
 
-          {/* Blood Group, District & Upazila */}
+          
           <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
             <div>
               <label className="mb-2 block text-sm font-semibold text-slate-700">
@@ -356,7 +356,7 @@ export default function RegisterPage() {
             </div>
           </div>
 
-          {/* Password */}
+      
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
             <div>
               <label className="mb-2 block text-sm font-semibold text-slate-700">
@@ -399,7 +399,7 @@ export default function RegisterPage() {
             </div>
           </div>
 
-          {/* Submit */}
+         
           <div className="pt-2">
             <button
               type="submit"
@@ -409,7 +409,7 @@ export default function RegisterPage() {
             </button>
           </div>
 
-          {/* Login Link */}
+         
           <div className="pt-2 text-center">
             <p className="text-sm text-slate-500">
               Already have an account?{" "}

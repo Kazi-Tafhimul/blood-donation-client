@@ -2,8 +2,9 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
+import { authClient } from "@/lib/auth-client";
 
 const features = [
   {
@@ -76,13 +77,83 @@ const features = [
 
 export default function HomePage() {
   const [sending, setSending] = useState(false);
+  useEffect(() => {
+    const checkProfile = async () => {
+      try {
+        
+        const { data, error } = await authClient.token();
+
+        if (error || !data?.token) {
+          console.log("No JWT found");
+          return;
+        }
+
+        const response = await fetch(
+          `${process.env.NEXT_PUBLIC_API_URL}/profile`,
+          {
+            headers: {
+              Authorization: `Bearer ${data.token}`,
+            },
+          },
+        );
+
+        if (!response.ok) {
+          console.log("Profile fetch failed");
+          return;
+        }
+
+        const user = await response.json();
+
+        console.log("CURRENT USER PROFILE:", user);
+      } catch (error) {
+        console.error("Profile check failed:", error);
+      }
+    };
+
+    checkProfile();
+  }, []);
+  const [stats, setStats] = useState({
+    activeUsers: 0,
+    totalFunding: 0,
+    totalBloodRequests: 0,
+  });
+
+  const [statsLoading, setStatsLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchStats = async () => {
+      try {
+        const response = await fetch(
+          `${process.env.NEXT_PUBLIC_API_URL}/public-stats`,
+        );
+
+        if (!response.ok) {
+          throw new Error("Failed to fetch stats");
+        }
+
+        const data = await response.json();
+
+        setStats({
+          activeUsers: data.activeUsers || 0,
+          totalFunding: data.totalFunding || 0,
+          totalBloodRequests: data.totalBloodRequests || 0,
+        });
+      } catch (error) {
+        console.error("Fetch homepage stats failed:", error);
+      } finally {
+        setStatsLoading(false);
+      }
+    };
+
+    fetchStats();
+  }, []);
 
   const handleContactSubmit = async (event) => {
     event.preventDefault();
 
     setSending(true);
 
-    // Contact API can be connected later.
+    
     await new Promise((resolve) => setTimeout(resolve, 700));
 
     toast.success("Thanks! Your message has been received.");
@@ -93,11 +164,9 @@ export default function HomePage() {
 
   return (
     <main className="bg-white text-gray-900">
-      {/* =========================================================
-          HERO
-      ========================================================== */}
+      
       <section className="relative overflow-hidden bg-gray-950">
-        {/* Background image */}
+       
         <Image
           src="https://images.unsplash.com/photo-1615461066841-6116e61058f4?auto=format&fit=crop&w=1800&q=85"
           alt="Blood donation"
@@ -106,7 +175,7 @@ export default function HomePage() {
           className="object-cover opacity-40"
         />
 
-        {/* Overlay */}
+      
         <div className="absolute inset-0 bg-gradient-to-r from-gray-950 via-gray-950/85 to-red-950/50" />
 
         <div className="relative mx-auto max-w-7xl px-6 py-24 sm:px-8 md:py-32 lg:px-10">
@@ -123,9 +192,8 @@ export default function HomePage() {
             </h1>
 
             <p className="mt-6 max-w-2xl text-base leading-8 text-gray-300 sm:text-lg">
-              BloodLink connects blood donors with people who need blood.
-              Join our community and help make blood available when it
-              matters most.
+              BloodLink connects blood donors with people who need blood. Join
+              our community and help make blood available when it matters most.
             </p>
 
             <div className="mt-8 flex flex-col gap-3 sm:flex-row">
@@ -138,7 +206,7 @@ export default function HomePage() {
               </Link>
 
               <Link
-                href="/search"
+                href="/find-donors"
                 className="inline-flex items-center justify-center rounded-xl border border-white/20 bg-white/10 px-7 py-3.5 text-sm font-bold text-white backdrop-blur-sm transition hover:bg-white/15"
               >
                 Search Donors
@@ -148,31 +216,31 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* =========================================================
-          QUICK STATS
-      ========================================================== */}
+     
       <section className="border-b border-gray-100 bg-white">
         <div className="mx-auto grid max-w-7xl grid-cols-1 divide-y divide-gray-100 px-6 sm:grid-cols-3 sm:divide-x sm:divide-y-0 sm:px-8 lg:px-10">
           <Stat
-            value="24/7"
-            label="Community Support"
+            value={statsLoading ? "..." : stats.activeUsers.toLocaleString()}
+            label="Active Donors"
           />
 
           <Stat
-            value="8+"
-            label="Blood Groups"
+            value={
+              statsLoading ? "..." : `৳${stats.totalFunding.toLocaleString()}`
+            }
+            label="Total Funding"
           />
 
           <Stat
-            value="1"
-            label="Mission — Save Lives"
+            value={
+              statsLoading ? "..." : stats.totalBloodRequests.toLocaleString()
+            }
+            label="Blood Requests"
           />
         </div>
       </section>
 
-      {/* =========================================================
-          FEATURED SECTION
-      ========================================================== */}
+    
       <section className="bg-gray-50 py-20 md:py-24">
         <div className="mx-auto max-w-7xl px-6 sm:px-8 lg:px-10">
           <div className="mx-auto max-w-2xl text-center">
@@ -185,8 +253,8 @@ export default function HomePage() {
             </h2>
 
             <p className="mt-4 text-base leading-7 text-gray-500">
-              A simple platform designed to bring donors and recipients
-              together quickly and responsibly.
+              A simple platform designed to bring donors and recipients together
+              quickly and responsibly.
             </p>
           </div>
 
@@ -219,9 +287,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* =========================================================
-          CTA SECTION
-      ========================================================== */}
+      
       <section className="bg-white py-20 md:py-24">
         <div className="mx-auto max-w-7xl px-6 sm:px-8 lg:px-10">
           <div className="relative overflow-hidden rounded-[2rem] bg-red-600 px-6 py-12 sm:px-10 md:px-14 md:py-16">
@@ -239,8 +305,8 @@ export default function HomePage() {
                 </h2>
 
                 <p className="mt-4 leading-7 text-red-100">
-                  Become a donor and make yourself available to people
-                  looking for blood in their time of need.
+                  Become a donor and make yourself available to people looking
+                  for blood in their time of need.
                 </p>
               </div>
 
@@ -256,16 +322,14 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* =========================================================
-          CONTACT
-      ========================================================== */}
+     
       <section
         id="contact"
         className="border-t border-gray-100 bg-gray-50 py-20 md:py-24"
       >
         <div className="mx-auto max-w-7xl px-6 sm:px-8 lg:px-10">
           <div className="grid gap-12 lg:grid-cols-2 lg:gap-20">
-            {/* Contact Info */}
+            
             <div>
               <p className="text-sm font-bold uppercase tracking-[0.2em] text-red-500">
                 Contact Us
@@ -279,8 +343,8 @@ export default function HomePage() {
 
               <p className="mt-5 max-w-lg leading-7 text-gray-500">
                 Have a question about BloodLink, blood requests, or donor
-                registration? Send us a message and our team will get back
-                to you.
+                registration? Send us a message and our team will get back to
+                you.
               </p>
 
               <div className="mt-8 space-y-5">
@@ -304,7 +368,7 @@ export default function HomePage() {
               </div>
             </div>
 
-            {/* Contact Form */}
+          
             <form
               onSubmit={handleContactSubmit}
               className="rounded-3xl border border-gray-200 bg-white p-6 shadow-sm sm:p-8"
@@ -381,13 +445,11 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* =========================================================
-          FOOTER
-      ========================================================== */}
+      
       <footer className="bg-gray-950 text-gray-300">
         <div className="mx-auto max-w-7xl px-6 py-14 sm:px-8 lg:px-10">
           <div className="grid gap-10 md:grid-cols-2 lg:grid-cols-4">
-            {/* Brand */}
+           
             <div className="lg:col-span-2">
               <Link
                 href="/"
@@ -396,17 +458,16 @@ export default function HomePage() {
                 <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-red-500 text-white">
                   +
                 </span>
-
                 Blood<span className="text-red-400">Link</span>
               </Link>
 
               <p className="mt-5 max-w-md text-sm leading-7 text-gray-400">
-                Connecting blood donors with people in need and building
-                a stronger, more caring community.
+                Connecting blood donors with people in need and building a
+                stronger, more caring community.
               </p>
             </div>
 
-            {/* Quick Links */}
+            
             <div>
               <h3 className="font-bold text-white">Quick Links</h3>
 
@@ -421,7 +482,6 @@ export default function HomePage() {
               </div>
             </div>
 
-            {/* Support */}
             <div>
               <h3 className="font-bold text-white">Support</h3>
 
@@ -442,9 +502,7 @@ export default function HomePage() {
   );
 }
 
-/* =========================================================
-   COMPONENTS
-========================================================= */
+
 
 function Stat({ value, label }) {
   return (
@@ -521,9 +579,7 @@ function ContactInfo({ icon, title, value }) {
           {title}
         </p>
 
-        <p className="mt-1 text-sm font-semibold text-gray-800">
-          {value}
-        </p>
+        <p className="mt-1 text-sm font-semibold text-gray-800">{value}</p>
       </div>
     </div>
   );
@@ -531,10 +587,7 @@ function ContactInfo({ icon, title, value }) {
 
 function FooterLink({ href, label }) {
   return (
-    <Link
-      href={href}
-      className="text-gray-400 transition hover:text-white"
-    >
+    <Link href={href} className="text-gray-400 transition hover:text-white">
       {label}
     </Link>
   );

@@ -7,7 +7,7 @@ export default function NotFound() {
     <main className="flex min-h-[calc(100vh-73px)] items-center justify-center bg-gray-50 px-6 py-16">
       {" "}
       <div className="w-full max-w-xl text-center">
-        {/* Icon */}{" "}
+       {" "}
         <div className="mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-red-50">
           {" "}
           <svg
@@ -31,20 +31,20 @@ export default function NotFound() {
             />{" "}
           </svg>{" "}
         </div>
-        {/* Error code */}
+        
         <p className="text-sm font-bold uppercase tracking-[0.2em] text-red-500">
           Error 404
         </p>
-        {/* Heading */}
+       
         <h1 className="mt-3 text-4xl font-bold tracking-tight text-gray-900 sm:text-5xl">
           Page not found
         </h1>
-        {/* Description */}
+        
         <p className="mx-auto mt-4 max-w-md text-sm leading-6 text-gray-500 sm:text-base">
           Sorry, we couldn&apos;t find the page you&apos;re looking for. It may
           have been moved, deleted, or the address might be incorrect.
         </p>
-        {/* Actions */}
+       
         <div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row">
           <Link
             href="/"
@@ -61,7 +61,7 @@ export default function NotFound() {
             Go Back
           </button>
         </div>
-        {/* Brand */}
+        
         <div className="mt-12">
           <p className="text-sm font-bold tracking-tight text-gray-900">
             Blood<span className="text-red-500">Link</span>

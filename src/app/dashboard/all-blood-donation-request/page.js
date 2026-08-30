@@ -30,9 +30,7 @@ export default function AllBloodDonationRequestPage() {
 
   const [actionLoading, setActionLoading] = useState(null);
 
-  // =========================================================
-  // Fetch ALL donation requests - ADMIN ONLY
-  // =========================================================
+ 
   useEffect(() => {
     const fetchAllRequests = async () => {
       if (sessionLoading) return;
@@ -42,7 +40,7 @@ export default function AllBloodDonationRequestPage() {
         return;
       }
 
-      // Frontend protection
+      
       if (session.user.role !== "admin" && session.user.role !== "volunteer") {
         toast.error("You are not authorized to access this page.");
         router.push("/dashboard");
@@ -60,10 +58,7 @@ export default function AllBloodDonationRequestPage() {
           return;
         }
 
-        // =====================================================
-        // IMPORTANT:
-        // Admin endpoint - fetches ALL users' donation requests
-        // =====================================================
+     
         const response = await fetch(
           `${process.env.NEXT_PUBLIC_API_URL}/admin/donation-requests`,
           {
@@ -92,9 +87,7 @@ export default function AllBloodDonationRequestPage() {
     fetchAllRequests();
   }, [session, sessionLoading, router]);
 
-  // =========================================================
-  // Filter
-  // =========================================================
+
   const filteredRequests = useMemo(() => {
     if (activeFilter === "all") {
       return requests;
@@ -103,9 +96,7 @@ export default function AllBloodDonationRequestPage() {
     return requests.filter((request) => request.status === activeFilter);
   }, [requests, activeFilter]);
 
-  // =========================================================
-  // Pagination
-  // =========================================================
+
   const totalPages = Math.ceil(filteredRequests.length / ITEMS_PER_PAGE);
 
   const paginatedRequests = useMemo(() => {
@@ -114,18 +105,13 @@ export default function AllBloodDonationRequestPage() {
     return filteredRequests.slice(startIndex, startIndex + ITEMS_PER_PAGE);
   }, [filteredRequests, currentPage]);
 
-  // =========================================================
-  // Filter change
-  // =========================================================
+
   const handleFilterChange = (filter) => {
     setActiveFilter(filter);
     setCurrentPage(1);
   };
 
-  // =========================================================
-  // Delete donation request
-  // Admin can delete any user's request
-  // =========================================================
+  
   const handleDelete = async (requestId) => {
     const confirmed = window.confirm(
       "Are you sure you want to delete this donation request?",
@@ -174,10 +160,7 @@ export default function AllBloodDonationRequestPage() {
     }
   };
 
-  // =========================================================
-  // Change status to done / canceled
-  // Admin can update any user's request
-  // =========================================================
+ 
   const handleStatusChange = async (requestId, status) => {
     const statusText = status === "done" ? "done" : "canceled";
 
@@ -238,9 +221,7 @@ export default function AllBloodDonationRequestPage() {
     }
   };
 
-  // =========================================================
-  // Loading
-  // =========================================================
+
   if (sessionLoading || loading) {
     return (
       <main className="min-h-screen bg-gray-50 px-4 py-8 sm:px-6 md:py-10">
@@ -267,13 +248,11 @@ export default function AllBloodDonationRequestPage() {
     );
   }
 
-  // =========================================================
-  // Main UI
-  // =========================================================
+ 
   return (
     <main className="min-h-screen bg-gray-50 px-4 py-8 sm:px-6 md:py-10">
       <div className="mx-auto max-w-7xl">
-        {/* Header */}
+     
         <section className="mb-8">
           <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
             <div>
@@ -299,7 +278,7 @@ export default function AllBloodDonationRequestPage() {
           </div>
         </section>
 
-        {/* Filters */}
+        
         <section className="mb-6 rounded-2xl border border-gray-200 bg-white p-3 shadow-sm">
           <div className="flex flex-wrap gap-2">
             {FILTERS.map((filter) => {
@@ -323,7 +302,7 @@ export default function AllBloodDonationRequestPage() {
           </div>
         </section>
 
-        {/* Empty State */}
+       
         {filteredRequests.length === 0 && (
           <div className="rounded-2xl border border-gray-200 bg-white px-6 py-16 text-center shadow-sm">
             <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-red-50 text-red-500">
@@ -364,10 +343,10 @@ export default function AllBloodDonationRequestPage() {
           </div>
         )}
 
-        {/* Table */}
+        
         {filteredRequests.length > 0 && (
           <section className="overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm">
-            {/* Table Header */}
+          
             <div className="flex flex-col gap-2 border-b border-gray-200 px-5 py-5 sm:flex-row sm:items-center sm:justify-between">
               <div>
                 <h2 className="font-bold text-gray-900">
@@ -381,47 +360,47 @@ export default function AllBloodDonationRequestPage() {
               </div>
             </div>
 
-            {/* Responsive Table */}
+            
             <div className="overflow-x-auto">
               <table className="w-full min-w-[1250px] text-left">
                 <thead>
                   <tr className="border-b border-gray-200 bg-gray-50">
-                    {/* Requester */}
+                   
                     <th className="px-5 py-4 text-xs font-bold uppercase tracking-wide text-gray-500">
                       Requester
                     </th>
 
-                    {/* Recipient */}
+                    
                     <th className="px-5 py-4 text-xs font-bold uppercase tracking-wide text-gray-500">
                       Recipient
                     </th>
 
-                    {/* Blood Group */}
+                   
                     <th className="px-5 py-4 text-xs font-bold uppercase tracking-wide text-gray-500">
                       Blood Group
                     </th>
 
-                    {/* Location */}
+                   
                     <th className="px-5 py-4 text-xs font-bold uppercase tracking-wide text-gray-500">
                       Location
                     </th>
 
-                    {/* Date */}
+                  
                     <th className="px-5 py-4 text-xs font-bold uppercase tracking-wide text-gray-500">
                       Date
                     </th>
 
-                    {/* Time */}
+                   
                     <th className="px-5 py-4 text-xs font-bold uppercase tracking-wide text-gray-500">
                       Time
                     </th>
 
-                    {/* Status */}
+                    
                     <th className="px-5 py-4 text-xs font-bold uppercase tracking-wide text-gray-500">
                       Status
                     </th>
 
-                    {/* Actions */}
+                
                     <th className="px-5 py-4 text-right text-xs font-bold uppercase tracking-wide text-gray-500">
                       Actions
                     </th>
@@ -434,7 +413,7 @@ export default function AllBloodDonationRequestPage() {
                       key={request._id}
                       className="border-b border-gray-100 last:border-b-0 hover:bg-gray-50/70"
                     >
-                      {/* Requester */}
+                      
                       <td className="px-5 py-4">
                         <div className="max-w-[220px]">
                           <p className="font-semibold text-gray-900">
@@ -447,7 +426,7 @@ export default function AllBloodDonationRequestPage() {
                         </div>
                       </td>
 
-                      {/* Recipient */}
+                      
                       <td className="px-5 py-4">
                         <div>
                           <p className="font-semibold text-gray-900">
@@ -460,14 +439,14 @@ export default function AllBloodDonationRequestPage() {
                         </div>
                       </td>
 
-                      {/* Blood Group */}
+                    
                       <td className="px-5 py-4">
                         <span className="inline-flex h-9 min-w-9 items-center justify-center rounded-full border border-red-100 bg-red-50 px-2 text-sm font-bold text-red-500">
                           {request.bloodGroup || "N/A"}
                         </span>
                       </td>
 
-                      {/* Location */}
+                     
                       <td className="px-5 py-4">
                         <div className="max-w-[200px]">
                           <p className="text-sm font-medium text-gray-700">
@@ -480,25 +459,25 @@ export default function AllBloodDonationRequestPage() {
                         </div>
                       </td>
 
-                      {/* Date */}
+                    
                       <td className="px-5 py-4 text-sm text-gray-600">
                         {request.donationDate || "N/A"}
                       </td>
 
-                      {/* Time */}
+                      
                       <td className="px-5 py-4 text-sm text-gray-600">
                         {request.donationTime || "N/A"}
                       </td>
 
-                      {/* Status */}
+                     
                       <td className="px-5 py-4">
                         <StatusBadge status={request.status} />
                       </td>
 
-                      {/* Actions */}
+                     
                       <td className="px-5 py-4">
                         <div className="flex items-center justify-end gap-2">
-                          {/* View */}
+                        
                           <Link
                             href={`/donation-requests/${request._id}`}
                             className="rounded-lg border border-gray-200 px-3 py-2 text-xs font-semibold text-gray-600 transition hover:bg-gray-50 hover:text-gray-900"
@@ -506,7 +485,7 @@ export default function AllBloodDonationRequestPage() {
                             View
                           </Link>
 
-                          {/* Edit */}
+                        
                           {session.user.role === "admin" &&
                             request.status !== "done" &&
                             request.status !== "canceled" && (
@@ -518,7 +497,7 @@ export default function AllBloodDonationRequestPage() {
                               </Link>
                             )}
 
-                          {/* Delete */}
+                      
                           {session.user.role === "admin" &&
                             request.status !== "done" &&
                             request.status !== "canceled" && (
@@ -534,7 +513,7 @@ export default function AllBloodDonationRequestPage() {
                               </button>
                             )}
 
-                          {/* Done / Cancel */}
+                          
                           {request.status === "inprogress" && (
                             <>
                               <button
@@ -576,7 +555,7 @@ export default function AllBloodDonationRequestPage() {
               </table>
             </div>
 
-            {/* Pagination */}
+           
             {totalPages > 1 && (
               <div className="flex flex-col gap-4 border-t border-gray-200 px-5 py-4 sm:flex-row sm:items-center sm:justify-between">
                 <p className="text-sm text-gray-500">
@@ -584,7 +563,7 @@ export default function AllBloodDonationRequestPage() {
                 </p>
 
                 <div className="flex items-center gap-2">
-                  {/* Previous */}
+                 
                   <button
                     type="button"
                     disabled={currentPage === 1}
@@ -594,7 +573,7 @@ export default function AllBloodDonationRequestPage() {
                     Previous
                   </button>
 
-                  {/* Page Numbers */}
+                
                   {Array.from(
                     { length: totalPages },
                     (_, index) => index + 1,
@@ -613,7 +592,7 @@ export default function AllBloodDonationRequestPage() {
                     </button>
                   ))}
 
-                  {/* Next */}
+                
                   <button
                     type="button"
                     disabled={currentPage === totalPages}
@@ -632,9 +611,7 @@ export default function AllBloodDonationRequestPage() {
   );
 }
 
-// =========================================================
-// Status Badge
-// =========================================================
+
 function StatusBadge({ status }) {
   const config = {
     pending: {

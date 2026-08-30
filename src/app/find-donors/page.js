@@ -21,17 +21,9 @@ export default function FindDonorsPage() {
   const [searching, setSearching] = useState(false);
   const [hasSearched, setHasSearched] = useState(false);
 
-  // =========================
-  // SELECTED DISTRICT
-  // =========================
-
   const selectedDistrict = useMemo(() => {
     return districts.find((district) => district.name === formData.district);
   }, [formData.district]);
-
-  // =========================
-  // FILTER UPAZILAS
-  // =========================
 
   const filteredUpazilas = useMemo(() => {
     if (!selectedDistrict) return [];
@@ -40,10 +32,6 @@ export default function FindDonorsPage() {
       (upazila) => String(upazila.district_id) === String(selectedDistrict.id),
     );
   }, [selectedDistrict]);
-
-  // =========================
-  // HANDLE INPUT
-  // =========================
 
   const handleChange = (event) => {
     const { name, value } = event.target;
@@ -55,16 +43,8 @@ export default function FindDonorsPage() {
     }));
   };
 
-  // =========================
-  // SEARCH DONORS
-  // =========================
-
   const handleSearch = async (event) => {
     event.preventDefault();
-
-    // -------------------------
-    // Validation
-    // -------------------------
 
     if (!formData.bloodGroup) {
       toast.error("Please select a blood group");
@@ -86,10 +66,6 @@ export default function FindDonorsPage() {
       setHasSearched(false);
       setDonors([]);
 
-      // -------------------------
-      // Build API URL
-      // -------------------------
-
       const params = new URLSearchParams({
         bloodGroup: formData.bloodGroup,
         district: formData.district,
@@ -102,17 +78,9 @@ export default function FindDonorsPage() {
 
       const data = await response.json();
 
-      // -------------------------
-      // API Error
-      // -------------------------
-
       if (!response.ok) {
         throw new Error(data.message || "Failed to find donors");
       }
-
-      // -------------------------
-      // Store Results
-      // -------------------------
 
       setDonors(Array.isArray(data.donors) ? data.donors : []);
       setHasSearched(true);
@@ -131,10 +99,6 @@ export default function FindDonorsPage() {
   return (
     <main className="min-h-screen bg-gray-50 px-4 py-10 sm:px-6 md:py-14">
       <div className="mx-auto max-w-6xl">
-        {/* =========================
-            HEADER
-        ========================= */}
-
         <section className="text-center">
           <p className="text-sm font-semibold text-red-500">BloodLink</p>
 
@@ -147,15 +111,9 @@ export default function FindDonorsPage() {
           </p>
         </section>
 
-        {/* =========================
-            SEARCH FORM
-        ========================= */}
-
         <section className="mx-auto mt-10 max-w-5xl rounded-3xl border border-gray-200 bg-white p-6 shadow-sm sm:p-8">
           <form onSubmit={handleSearch}>
             <div className="grid gap-5 md:grid-cols-3">
-              {/* Blood Group */}
-
               <div>
                 <label
                   htmlFor="bloodGroup"
@@ -182,8 +140,6 @@ export default function FindDonorsPage() {
                 </select>
               </div>
 
-              {/* District */}
-
               <div>
                 <label
                   htmlFor="district"
@@ -209,8 +165,6 @@ export default function FindDonorsPage() {
                   ))}
                 </select>
               </div>
-
-              {/* Upazila */}
 
               <div>
                 <label
@@ -242,8 +196,6 @@ export default function FindDonorsPage() {
                 </select>
               </div>
             </div>
-
-            {/* Search Button */}
 
             <div className="mt-6 flex justify-center">
               <button
@@ -280,14 +232,8 @@ export default function FindDonorsPage() {
           </form>
         </section>
 
-        {/* =========================
-            SEARCH RESULTS
-        ========================= */}
-
         {hasSearched && (
           <section className="mx-auto mt-10 max-w-5xl">
-            {/* Result Header */}
-
             <div className="mb-5 flex items-center justify-between">
               <div>
                 <h2 className="text-xl font-bold text-gray-900">
@@ -300,8 +246,6 @@ export default function FindDonorsPage() {
                 </p>
               </div>
             </div>
-
-            {/* No Results */}
 
             {donors.length === 0 ? (
               <div className="rounded-3xl border border-dashed border-gray-200 bg-white px-6 py-14 text-center">
@@ -327,13 +271,11 @@ export default function FindDonorsPage() {
                 </h3>
 
                 <p className="mx-auto mt-2 max-w-md text-sm leading-6 text-gray-500">
-                  We couldn&apos;t find any active donor matching your selected blood
-                  group and location.
+                  We couldn&apos;t find any active donor matching your selected
+                  blood group and location.
                 </p>
               </div>
             ) : (
-              /* Donor Results */
-
               <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
                 {donors.map((donor) => (
                   <div
@@ -341,8 +283,6 @@ export default function FindDonorsPage() {
                     className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm"
                   >
                     <div className="flex items-center gap-4">
-                      {/* Avatar */}
-
                       <div className="flex h-14 w-14 shrink-0 items-center justify-center overflow-hidden rounded-full bg-red-100">
                         {donor.image ? (
                           <img
@@ -359,8 +299,6 @@ export default function FindDonorsPage() {
                         )}
                       </div>
 
-                      {/* Name */}
-
                       <div className="min-w-0">
                         <h3 className="truncate font-bold text-gray-900">
                           {donor.name || "Unknown Donor"}
@@ -372,8 +310,6 @@ export default function FindDonorsPage() {
                       </div>
                     </div>
 
-                    {/* Blood Group */}
-
                     <div className="mt-5 flex items-center justify-between rounded-xl bg-red-50 px-4 py-3">
                       <span className="text-sm font-medium text-gray-600">
                         Blood Group
@@ -383,8 +319,6 @@ export default function FindDonorsPage() {
                         {donor.bloodGroup}
                       </span>
                     </div>
-
-                    {/* Location */}
 
                     <div className="mt-4 space-y-2 text-sm text-gray-600">
                       <div className="flex items-center gap-2">
@@ -403,10 +337,6 @@ export default function FindDonorsPage() {
             )}
           </section>
         )}
-
-        {/* =========================
-            INITIAL EMPTY STATE
-        ========================= */}
 
         {!hasSearched && (
           <section className="mx-auto mt-8 max-w-5xl rounded-3xl border border-dashed border-gray-200 bg-white px-6 py-14 text-center">

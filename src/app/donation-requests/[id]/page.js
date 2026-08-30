@@ -23,7 +23,6 @@ export default function DonationRequestDetailsPage() {
       try {
         setLoading(true);
 
-        // Check logged-in user
         const sessionResult = await authClient.getSession();
 
         if (sessionResult.error || !sessionResult.data?.user) {
@@ -34,7 +33,6 @@ export default function DonationRequestDetailsPage() {
 
         setSession(sessionResult.data);
 
-        // Fetch donation request
         const response = await fetch(
           `${process.env.NEXT_PUBLIC_API_URL}/donation-requests/${params.id}`,
         );
@@ -42,18 +40,14 @@ export default function DonationRequestDetailsPage() {
         const data = await response.json();
 
         if (!response.ok) {
-          throw new Error(
-            data.message || "Failed to load donation request",
-          );
+          throw new Error(data.message || "Failed to load donation request");
         }
 
         setRequest(data);
       } catch (error) {
         console.error("Load donation request error:", error);
 
-        toast.error(
-          error.message || "Failed to load donation request.",
-        );
+        toast.error(error.message || "Failed to load donation request.");
       } finally {
         setLoading(false);
       }
@@ -64,7 +58,6 @@ export default function DonationRequestDetailsPage() {
     }
   }, [params?.id, router]);
 
-  // Confirm donation
   const handleConfirmDonation = async () => {
     if (!session?.user) {
       toast.error("Please login first.");
@@ -75,7 +68,6 @@ export default function DonationRequestDetailsPage() {
     try {
       setDonating(true);
 
-      // Get Better Auth JWT
       const tokenResult = await authClient.token();
 
       if (tokenResult.error || !tokenResult.data?.token) {
@@ -97,9 +89,7 @@ export default function DonationRequestDetailsPage() {
       const data = await response.json();
 
       if (!response.ok) {
-        toast.error(
-          data.message || "Failed to confirm donation.",
-        );
+        toast.error(data.message || "Failed to confirm donation.");
         return;
       }
 
@@ -116,7 +106,6 @@ export default function DonationRequestDetailsPage() {
     }
   };
 
-  // Loading state
   if (loading) {
     return (
       <main className="min-h-screen bg-gray-50 px-4 py-10 sm:px-6">
@@ -142,10 +131,7 @@ export default function DonationRequestDetailsPage() {
 
                 <div className="grid gap-5 md:grid-cols-2">
                   {[1, 2, 3, 4, 5, 6, 7, 8].map((item) => (
-                    <div
-                      key={item}
-                      className="h-20 rounded-2xl bg-gray-200"
-                    />
+                    <div key={item} className="h-20 rounded-2xl bg-gray-200" />
                   ))}
                 </div>
               </div>
@@ -156,7 +142,6 @@ export default function DonationRequestDetailsPage() {
     );
   }
 
-  // Not found
   if (!request) {
     return (
       <main className="min-h-screen bg-gray-50 px-4 py-10 sm:px-6">
@@ -184,8 +169,7 @@ export default function DonationRequestDetailsPage() {
             </h1>
 
             <p className="mx-auto mt-2 max-w-md text-sm text-gray-500">
-              The donation request may have been removed or no
-              longer exists.
+              The donation request may have been removed or no longer exists.
             </p>
 
             <Link
@@ -206,7 +190,6 @@ export default function DonationRequestDetailsPage() {
     <>
       <main className="min-h-screen bg-gray-50 px-4 py-8 sm:px-6 md:py-10">
         <div className="mx-auto max-w-4xl">
-          {/* Back Button */}
           <Link
             href="/donation-requests"
             className="mb-6 inline-flex items-center gap-2 text-sm font-semibold text-gray-600 transition hover:text-gray-900"
@@ -215,13 +198,10 @@ export default function DonationRequestDetailsPage() {
             Back to Donation Requests
           </Link>
 
-          {/* Main Card */}
           <div className="overflow-hidden rounded-3xl border border-gray-200 bg-white shadow-sm">
-            {/* Top Red Border */}
             <div className="h-1.5 bg-red-500" />
 
             <div className="p-6 md:p-8">
-              {/* Header */}
               <div className="flex flex-col gap-5 sm:flex-row sm:items-start sm:justify-between">
                 <div>
                   <p className="text-sm font-semibold text-red-500">
@@ -232,7 +212,6 @@ export default function DonationRequestDetailsPage() {
                     {request.recipientName}
                   </h1>
 
-                  {/* Status */}
                   <span
                     className={`mt-3 inline-flex rounded-full px-3 py-1 text-xs font-semibold ${
                       isPending
@@ -244,7 +223,6 @@ export default function DonationRequestDetailsPage() {
                   </span>
                 </div>
 
-                {/* Blood Group */}
                 <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-full border border-red-100 bg-red-50 text-xl font-bold text-red-500">
                   {request.bloodGroup}
                 </div>
@@ -252,7 +230,6 @@ export default function DonationRequestDetailsPage() {
 
               <div className="my-7 h-px bg-gray-200" />
 
-              {/* Recipient Information */}
               <section>
                 <h2 className="text-lg font-bold text-gray-900">
                   Recipient Information
@@ -264,30 +241,18 @@ export default function DonationRequestDetailsPage() {
                     value={request.recipientName}
                   />
 
-                  <InfoItem
-                    label="Blood Group"
-                    value={request.bloodGroup}
-                  />
+                  <InfoItem label="Blood Group" value={request.bloodGroup} />
 
-                  <InfoItem
-                    label="District"
-                    value={request.district}
-                  />
+                  <InfoItem label="District" value={request.district} />
 
-                  <InfoItem
-                    label="Upazila"
-                    value={request.upazila}
-                  />
+                  <InfoItem label="Upazila" value={request.upazila} />
 
                   <InfoItem
                     label="Hospital Name"
                     value={request.hospitalName}
                   />
 
-                  <InfoItem
-                    label="Full Address"
-                    value={request.fullAddress}
-                  />
+                  <InfoItem label="Full Address" value={request.fullAddress} />
 
                   <InfoItem
                     label="Required Date"
@@ -303,7 +268,6 @@ export default function DonationRequestDetailsPage() {
 
               <div className="my-7 h-px bg-gray-200" />
 
-              {/* Request Message */}
               <section>
                 <h2 className="text-lg font-bold text-gray-900">
                   Request Message
@@ -318,7 +282,6 @@ export default function DonationRequestDetailsPage() {
 
               <div className="my-7 h-px bg-gray-200" />
 
-              {/* Requester Information */}
               <section>
                 <h2 className="text-lg font-bold text-gray-900">
                   Requester Information
@@ -337,18 +300,15 @@ export default function DonationRequestDetailsPage() {
                 </div>
               </section>
 
-              {/* Donate Section */}
               {isPending && (
                 <section className="mt-8 rounded-2xl border border-red-100 bg-red-50/70 p-5">
                   <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                     <div>
-                      <h3 className="font-bold text-gray-900">
-                        Want to help?
-                      </h3>
+                      <h3 className="font-bold text-gray-900">Want to help?</h3>
 
                       <p className="mt-1 text-sm text-gray-500">
-                        Confirm that you are available to donate
-                        blood for this request.
+                        Confirm that you are available to donate blood for this
+                        request.
                       </p>
                     </div>
 
@@ -363,7 +323,6 @@ export default function DonationRequestDetailsPage() {
                 </section>
               )}
 
-              {/* In Progress */}
               {!isPending && (
                 <section className="mt-8 rounded-2xl border border-blue-100 bg-blue-50/70 p-5">
                   <p className="font-semibold text-blue-700">
@@ -388,7 +347,6 @@ export default function DonationRequestDetailsPage() {
         </div>
       </main>
 
-      {/* Custom Tailwind Modal */}
       {isModalOpen && (
         <div
           className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-4 py-6"
@@ -399,7 +357,6 @@ export default function DonationRequestDetailsPage() {
           }}
         >
           <div className="w-full max-w-md rounded-2xl bg-white shadow-2xl">
-            {/* Modal Header */}
             <div className="border-b border-gray-200 px-6 py-5">
               <div className="flex items-start justify-between gap-4">
                 <div>
@@ -437,9 +394,7 @@ export default function DonationRequestDetailsPage() {
               </div>
             </div>
 
-            {/* Modal Body */}
             <div className="space-y-5 px-6 py-6">
-              {/* Donor Name */}
               <div>
                 <label
                   htmlFor="donorName"
@@ -457,7 +412,6 @@ export default function DonationRequestDetailsPage() {
                 />
               </div>
 
-              {/* Donor Email */}
               <div>
                 <label
                   htmlFor="donorEmail"
@@ -476,7 +430,6 @@ export default function DonationRequestDetailsPage() {
               </div>
             </div>
 
-            {/* Modal Footer */}
             <div className="flex flex-col-reverse gap-3 border-t border-gray-200 px-6 py-5 sm:flex-row sm:justify-end">
               <button
                 type="button"
@@ -516,7 +469,6 @@ export default function DonationRequestDetailsPage() {
                         d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4Z"
                       />
                     </svg>
-
                     Confirming...
                   </>
                 ) : (

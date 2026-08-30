@@ -19,6 +19,12 @@ export const auth = betterAuth({
   emailAndPassword: {
     enabled: true,
   },
+  socialProviders: {
+    google: {
+      clientId: process.env.GOOGLE_CLIENT_ID,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+    },
+  },
 
   user: {
     additionalFields: {
@@ -36,17 +42,20 @@ export const auth = betterAuth({
 
       bloodGroup: {
         type: "string",
-        required: true,
+        required: false,
+        defaultValue: "",
       },
 
       district: {
         type: "string",
-        required: true,
+        required: false,
+        defaultValue: "",
       },
 
       upazila: {
         type: "string",
-        required: true,
+        required: false,
+        defaultValue: "",
       },
       image: {
         type: "string",

@@ -41,17 +41,9 @@ export default function ProfilePage() {
   const [saving, setSaving] = useState(false);
   const [editing, setEditing] = useState(false);
 
-  // =========================
-  // DISTRICT OPTIONS
-  // =========================
-
   const districtOptions = useMemo(() => {
     return Array.isArray(districts) ? districts : [];
   }, []);
-
-  // =========================
-  // FIND SELECTED DISTRICT
-  // =========================
 
   const selectedDistrict = useMemo(() => {
     return districtOptions.find(
@@ -61,10 +53,6 @@ export default function ProfilePage() {
     );
   }, [districtOptions, formData.district]);
 
-  // =========================
-  // UPAZILA OPTIONS
-  // =========================
-
   const upazilaOptions = useMemo(() => {
     if (!selectedDistrict) return [];
 
@@ -72,10 +60,6 @@ export default function ProfilePage() {
       (upazila) => String(upazila.district_id) === String(selectedDistrict.id),
     );
   }, [selectedDistrict]);
-
-  // =========================
-  // GET PROFILE
-  // =========================
 
   const getProfile = async () => {
     try {
@@ -126,10 +110,6 @@ export default function ProfilePage() {
     }
   };
 
-  // =========================
-  // LOAD PROFILE
-  // =========================
-
   useEffect(() => {
     if (sessionLoading) return;
 
@@ -141,10 +121,6 @@ export default function ProfilePage() {
     getProfile();
   }, [sessionLoading, session?.user?.id]);
 
-  // =========================
-  // HANDLE INPUT
-  // =========================
-
   const handleChange = (event) => {
     const { name, value } = event.target;
 
@@ -153,10 +129,6 @@ export default function ProfilePage() {
       [name]: value,
     }));
   };
-
-  // =========================
-  // HANDLE DISTRICT CHANGE
-  // =========================
 
   const handleDistrictChange = (event) => {
     const districtName = event.target.value;
@@ -168,29 +140,21 @@ export default function ProfilePage() {
     }));
   };
 
-  // =========================
-  // HANDLE IMAGE CHANGE
-  // =========================
-
   const handleImageChange = (event) => {
     const file = event.target.files?.[0];
 
     if (!file) return;
 
-    // Allowed image types
     if (!["image/png", "image/jpeg", "image/jpg"].includes(file.type)) {
       toast.error("Only PNG and JPG images are allowed");
 
-      // Reset file input
       event.target.value = "";
       return;
     }
 
-    // Maximum 5MB
     if (file.size > 5 * 1024 * 1024) {
       toast.error("Profile photo must be less than 5MB");
 
-      // Reset file input
       event.target.value = "";
       return;
     }
@@ -200,10 +164,6 @@ export default function ProfilePage() {
       imageFile: file,
     }));
   };
-
-  // =========================
-  // UPLOAD IMAGE TO IMGBB
-  // =========================
 
   const uploadImageToImgBB = async (file) => {
     const imageFormData = new FormData();
@@ -227,10 +187,6 @@ export default function ProfilePage() {
     return data.data.url;
   };
 
-  // =========================
-  // EDIT PROFILE
-  // =========================
-
   const handleEdit = () => {
     setFormData({
       ...profile,
@@ -240,10 +196,6 @@ export default function ProfilePage() {
     setEditing(true);
   };
 
-  // =========================
-  // CANCEL EDIT
-  // =========================
-
   const handleCancel = () => {
     setFormData({
       ...profile,
@@ -252,10 +204,6 @@ export default function ProfilePage() {
 
     setEditing(false);
   };
-
-  // =========================
-  // SAVE PROFILE
-  // =========================
 
   const handleSave = async (event) => {
     event.preventDefault();
@@ -283,10 +231,6 @@ export default function ProfilePage() {
     try {
       setSaving(true);
 
-      // =========================
-      // GET AUTH TOKEN
-      // =========================
-
       const { data: tokenData, error: tokenError } = await authClient.token();
 
       if (tokenError || !tokenData?.token) {
@@ -295,14 +239,8 @@ export default function ProfilePage() {
         return;
       }
 
-      // =========================
-      // IMAGE URL
-      // =========================
-
-      // Keep old image by default
       let imageUrl = formData.image || "";
 
-      // Upload only if user selected a new image
       if (formData.imageFile) {
         toast.loading("Uploading profile photo...", {
           id: "profile-image-upload",
@@ -314,10 +252,6 @@ export default function ProfilePage() {
           id: "profile-image-upload",
         });
       }
-
-      // =========================
-      // UPDATE PROFILE API
-      // =========================
 
       const response = await fetch(`${API_URL}/profile`, {
         method: "PATCH",
@@ -350,10 +284,6 @@ export default function ProfilePage() {
 
       console.log("UPDATED USER:", updatedUser);
 
-      // =========================
-      // UPDATED PROFILE DATA
-      // =========================
-
       const updatedProfile = {
         name: updatedUser.name || "",
         email: updatedUser.email || profile.email || "",
@@ -370,10 +300,8 @@ export default function ProfilePage() {
         imageFile: null,
       });
 
-      // Notify Navbar
       window.dispatchEvent(new Event("profile-updated"));
 
-      // Return to non-edit mode
       setEditing(false);
 
       toast.success("Profile updated successfully");
@@ -387,10 +315,6 @@ export default function ProfilePage() {
       setSaving(false);
     }
   };
-
-  // =========================
-  // LOADING
-  // =========================
 
   if (sessionLoading || loading) {
     return (
@@ -427,14 +351,10 @@ export default function ProfilePage() {
     );
   }
 
-  // =========================
-  // PROFILE PAGE
-  // =========================
-
   return (
     <main className="min-h-screen bg-gray-50 px-4 py-8 sm:px-6 md:py-10">
       <div className="mx-auto max-w-4xl">
-        {/* Header */}
+      
         <section className="mb-8">
           <p className="text-sm font-semibold text-red-500">Dashboard</p>
 
@@ -480,12 +400,12 @@ export default function ProfilePage() {
           </div>
         </section>
 
-        {/* Profile Card */}
+      
         <section className="overflow-hidden rounded-3xl border border-gray-200 bg-white shadow-sm">
-          {/* Profile Top */}
+        
           <div className="border-b border-gray-100 bg-gradient-to-r from-red-50 to-white px-6 py-8 sm:px-8">
             <div className="flex flex-col items-center gap-5 sm:flex-row">
-              {/* Avatar */}
+             
               <div className="relative flex h-24 w-24 shrink-0 items-center justify-center overflow-hidden rounded-full border-4 border-white bg-red-100 shadow-sm">
                 {formData.image ? (
                   <img
@@ -523,7 +443,7 @@ export default function ProfilePage() {
             </div>
           </div>
 
-          {/* Form */}
+          
           <form onSubmit={handleSave} className="p-6 sm:p-8">
             <div className="mb-6">
               <h3 className="text-lg font-bold text-gray-900">
@@ -536,7 +456,7 @@ export default function ProfilePage() {
             </div>
 
             <div className="grid gap-6 sm:grid-cols-2">
-              {/* Name */}
+          
               <div>
                 <label
                   htmlFor="name"
@@ -561,7 +481,7 @@ export default function ProfilePage() {
                 />
               </div>
 
-              {/* Email */}
+              
               <div>
                 <label
                   htmlFor="email"
@@ -584,7 +504,7 @@ export default function ProfilePage() {
                 </p>
               </div>
 
-              {/* Blood Group */}
+            
               <div>
                 <label
                   htmlFor="bloodGroup"
@@ -615,7 +535,7 @@ export default function ProfilePage() {
                 </select>
               </div>
 
-              {/* District */}
+              
               <div>
                 <label
                   htmlFor="district"
@@ -646,7 +566,7 @@ export default function ProfilePage() {
                 </select>
               </div>
 
-              {/* Upazila */}
+             
               <div>
                 <label
                   htmlFor="upazila"
@@ -681,7 +601,7 @@ export default function ProfilePage() {
                 </select>
               </div>
 
-              {/* Profile Photo */}
+              
               <div>
                 <label className="mb-2 block text-sm font-semibold text-gray-700">
                   Profile Photo
@@ -756,7 +676,7 @@ export default function ProfilePage() {
               </div>
             </div>
 
-            {/* Buttons */}
+           
             {editing && (
               <div className="mt-8 flex flex-col-reverse gap-3 border-t border-gray-100 pt-6 sm:flex-row sm:justify-end">
                 <button

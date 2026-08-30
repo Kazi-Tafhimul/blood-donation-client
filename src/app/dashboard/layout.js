@@ -165,7 +165,7 @@ export default function DashboardLayout({ children }) {
 
   return (
     <div className="min-h-screen bg-slate-50">
-      {/* Mobile Header */}
+    
       <header className="sticky top-0 z-30 flex h-16 items-center justify-between border-b border-slate-200 bg-white px-4 lg:hidden">
         <button
           type="button"
@@ -196,7 +196,7 @@ export default function DashboardLayout({ children }) {
         <div className="h-9 w-9 rounded-full bg-red-500" />
       </header>
 
-      {/* Mobile Overlay */}
+     
       {sidebarOpen && (
         <button
           type="button"
@@ -206,13 +206,13 @@ export default function DashboardLayout({ children }) {
         />
       )}
 
-      {/* Sidebar */}
+    
       <aside
         className={`fixed inset-y-0 left-0 z-50 flex w-72 flex-col border-r border-slate-200 bg-white transition-transform duration-300 ${
           sidebarOpen ? "translate-x-0" : "-translate-x-full"
         } lg:translate-x-0`}
       >
-        {/* Logo */}
+        
         <div className="flex h-20 items-center justify-between border-b border-slate-100 px-6">
           <Link
             href="/"
@@ -241,7 +241,7 @@ export default function DashboardLayout({ children }) {
             </span>
           </Link>
 
-          {/* Close button - mobile only */}
+          
           <button
             type="button"
             onClick={() => setSidebarOpen(false)}
@@ -252,7 +252,7 @@ export default function DashboardLayout({ children }) {
           </button>
         </div>
 
-        {/* Navigation */}
+        
         <nav className="flex-1 space-y-2 p-4">
           <p className="mb-3 px-3 text-xs font-bold uppercase tracking-wider text-slate-400">
             Menu
@@ -296,7 +296,7 @@ export default function DashboardLayout({ children }) {
             })}
         </nav>
 
-        {/* Bottom */}
+        
         <div className="border-t border-slate-100 p-4">
           <Link
             href="/"
@@ -346,7 +346,7 @@ export default function DashboardLayout({ children }) {
         </div>
       </aside>
 
-      {/* Main */}
+     
       <div className="lg:pl-72">
         <main className="min-h-screen">{children}</main>
       </div>

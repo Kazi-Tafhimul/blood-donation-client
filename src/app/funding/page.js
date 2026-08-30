@@ -113,7 +113,6 @@ export default function FundingPage() {
 
   return (
     <div className="mx-auto w-full max-w-7xl p-4 sm:p-6 lg:p-8">
-      {/* Header */}
       <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h1 className="text-2xl font-bold text-slate-900 sm:text-3xl">
@@ -134,7 +133,6 @@ export default function FundingPage() {
         </button>
       </div>
 
-      {/* Funding Table */}
       <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
         {loading ? (
           <div className="p-6">
@@ -146,8 +144,7 @@ export default function FundingPage() {
         ) : fundings.length === 0 ? (
           <div className="px-6 py-16 text-center">
             <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-emerald-50 text-2xl">
-              <TbMoneybagHeart/>
-
+              <TbMoneybagHeart />
             </div>
 
             <h2 className="mt-4 text-lg font-bold text-slate-900">

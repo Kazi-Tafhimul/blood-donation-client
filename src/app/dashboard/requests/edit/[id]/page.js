@@ -5,13 +5,16 @@ import { useParams, useRouter } from "next/navigation";
 import districts from "@/data/districts.json";
 import upazilas from "@/data/upazilas.json";
 import { authClient } from "@/lib/auth-client";
+import { FaHandHoldingHeart, FaUserCircle } from "react-icons/fa";
+import { MdOutlineMedicalInformation } from "react-icons/md";
+import { GrUpdate } from "react-icons/gr";
+import toast from "react-hot-toast";
 
 export default function EditDonationRequestPage() {
   const params = useParams();
   const router = useRouter();
 
-  const { data: session, isPending: sessionLoading } =
-    authClient.useSession();
+  const { data: session, isPending: sessionLoading } = authClient.useSession();
 
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
@@ -36,12 +39,9 @@ export default function EditDonationRequestPage() {
   );
 
   const filteredUpazilas = selectedDistrict
-    ? upazilas.filter(
-        (upazila) => upazila.district_id === selectedDistrict.id,
-      )
+    ? upazilas.filter((upazila) => upazila.district_id === selectedDistrict.id)
     : [];
 
-  // Fetch existing donation request
   useEffect(() => {
     const fetchRequest = async () => {
       if (!params?.id) return;
@@ -69,16 +69,10 @@ export default function EditDonationRequestPage() {
         const data = await response.json();
 
         if (!response.ok) {
-          throw new Error(
-            data.message || "Failed to load donation request.",
-          );
+          throw new Error(data.message || "Failed to load donation request.");
         }
 
-        // Don't allow editing done/canceled requests
-        if (
-          data.status === "done" ||
-          data.status === "canceled"
-        ) {
+        if (data.status === "done" || data.status === "canceled") {
           setPageError(
             "Completed or canceled donation requests cannot be edited.",
           );
@@ -98,9 +92,7 @@ export default function EditDonationRequestPage() {
         });
       } catch (error) {
         console.error("Fetch donation request error:", error);
-        setPageError(
-          error.message || "Failed to load donation request.",
-        );
+        setPageError(error.message || "Failed to load donation request.");
       } finally {
         setLoading(false);
       }
@@ -120,7 +112,6 @@ export default function EditDonationRequestPage() {
       ...(name === "district" ? { upazila: "" } : {}),
     }));
 
-    // Remove field error while typing
     setErrors((prev) => ({
       ...prev,
       [name]: "",
@@ -208,7 +199,8 @@ export default function EditDonationRequestPage() {
         return;
       }
 
-      alert("Donation request updated successfully!");
+     // alert("Donation request updated successfully!");
+     toast.success("Donation request updated successfully!")
 
       router.push("/dashboard/my-donation-requests");
     } catch (error) {
@@ -219,7 +211,6 @@ export default function EditDonationRequestPage() {
     }
   };
 
-  // Loading
   if (sessionLoading || loading) {
     return (
       <div className="min-h-screen bg-gray-50 p-6">
@@ -251,7 +242,6 @@ export default function EditDonationRequestPage() {
     );
   }
 
-  // Error / unavailable request
   if (pageError) {
     return (
       <div className="min-h-screen bg-gray-50 p-6">
@@ -284,9 +274,7 @@ export default function EditDonationRequestPage() {
 
             <button
               type="button"
-              onClick={() =>
-                router.push("/dashboard/my-donation-requests")
-              }
+              onClick={() => router.push("/dashboard/my-donation-requests")}
               className="mt-6 rounded-xl bg-gray-900 px-5 py-3 text-sm font-semibold text-white transition hover:bg-gray-800"
             >
               Back to My Requests
@@ -300,13 +288,11 @@ export default function EditDonationRequestPage() {
   return (
     <div className="min-h-screen bg-gray-50 p-6">
       <div className="mx-auto max-w-4xl">
-        {/* Header */}
+      
         <div className="mb-6">
           <button
             type="button"
-            onClick={() =>
-              router.push("/dashboard/my-donation-requests")
-            }
+            onClick={() => router.push("/dashboard/my-donation-requests")}
             className="mb-4 text-sm font-semibold text-slate-500 transition hover:text-slate-800"
           >
             ← Back to My Donation Requests
@@ -322,10 +308,12 @@ export default function EditDonationRequestPage() {
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-6">
-          {/* Requester Information */}
+        
           <div className="space-y-4 rounded-2xl border border-gray-100 bg-white p-6 shadow-sm">
             <div className="mb-2 flex items-center gap-2 font-semibold text-red-500">
-              <span className="text-xl">👤</span>
+              <span className="text-xl">
+                <FaUserCircle />
+              </span>
               <span>Requester Information</span>
             </div>
 
@@ -358,15 +346,17 @@ export default function EditDonationRequestPage() {
             </div>
           </div>
 
-          {/* Recipient Information */}
+        
           <div className="space-y-4 rounded-2xl border border-gray-100 bg-white p-6 shadow-sm">
             <div className="mb-2 flex items-center gap-2 font-semibold text-red-500">
-              <span className="text-xl">❤️</span>
+              <span className="text-xl">
+                <FaHandHoldingHeart />
+              </span>
               <span>Recipient Information</span>
             </div>
 
             <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-              {/* Recipient Name */}
+             
               <div>
                 <label className="mb-2 block text-sm font-semibold text-slate-700">
                   Recipient Name
@@ -388,7 +378,7 @@ export default function EditDonationRequestPage() {
                 )}
               </div>
 
-              {/* Blood Group */}
+             
               <div>
                 <label className="mb-2 block text-sm font-semibold text-slate-700">
                   Blood Group
@@ -417,7 +407,7 @@ export default function EditDonationRequestPage() {
                 )}
               </div>
 
-              {/* District */}
+         
               <div>
                 <label className="mb-2 block text-sm font-semibold text-slate-700">
                   District
@@ -439,13 +429,11 @@ export default function EditDonationRequestPage() {
                 </select>
 
                 {errors.district && (
-                  <p className="mt-1 text-sm text-red-500">
-                    {errors.district}
-                  </p>
+                  <p className="mt-1 text-sm text-red-500">{errors.district}</p>
                 )}
               </div>
 
-              {/* Upazila */}
+             
               <div>
                 <label className="mb-2 block text-sm font-semibold text-slate-700">
                   Upazila
@@ -468,13 +456,11 @@ export default function EditDonationRequestPage() {
                 </select>
 
                 {errors.upazila && (
-                  <p className="mt-1 text-sm text-red-500">
-                    {errors.upazila}
-                  </p>
+                  <p className="mt-1 text-sm text-red-500">{errors.upazila}</p>
                 )}
               </div>
 
-              {/* Hospital */}
+             
               <div>
                 <label className="mb-2 block text-sm font-semibold text-slate-700">
                   Hospital Name
@@ -496,7 +482,7 @@ export default function EditDonationRequestPage() {
                 )}
               </div>
 
-              {/* Full Address */}
+            
               <div>
                 <label className="mb-2 block text-sm font-semibold text-slate-700">
                   Full Address
@@ -518,7 +504,7 @@ export default function EditDonationRequestPage() {
                 )}
               </div>
 
-              {/* Date */}
+              
               <div>
                 <label className="mb-2 block text-sm font-semibold text-slate-700">
                   Required Date
@@ -539,7 +525,7 @@ export default function EditDonationRequestPage() {
                 )}
               </div>
 
-              {/* Time */}
+             
               <div>
                 <label className="mb-2 block text-sm font-semibold text-slate-700">
                   Required Time
@@ -562,10 +548,12 @@ export default function EditDonationRequestPage() {
             </div>
           </div>
 
-          {/* Medical Information */}
+       
           <div className="space-y-4 rounded-2xl border border-gray-100 bg-white p-6 shadow-sm">
             <div className="mb-2 flex items-center gap-2 font-semibold text-red-500">
-              <span className="text-xl">📄</span>
+              <span className="text-xl">
+                <MdOutlineMedicalInformation />
+              </span>
               <span>Medical Information</span>
             </div>
 
@@ -591,13 +579,11 @@ export default function EditDonationRequestPage() {
             </div>
           </div>
 
-          {/* Buttons */}
+     
           <div className="flex flex-col gap-3 sm:flex-row">
             <button
               type="button"
-              onClick={() =>
-                router.push("/dashboard/my-donation-requests")
-              }
+              onClick={() => router.push("/dashboard/my-donation-requests")}
               disabled={submitting}
               className="rounded-xl border border-gray-300 bg-white px-6 py-3.5 font-medium text-slate-700 transition hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-60"
             >
@@ -632,12 +618,13 @@ export default function EditDonationRequestPage() {
                       d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4Z"
                     />
                   </svg>
-
                   Updating...
                 </>
               ) : (
                 <>
-                  <span>💾</span>
+                  <span>
+                    <GrUpdate />
+                  </span>
                   <span>Update Donation Request</span>
                 </>
               )}
