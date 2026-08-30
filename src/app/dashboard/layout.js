@@ -51,7 +51,7 @@ const menuItems = [
   {
     label: "All Blood Donation Requests",
     href: "/dashboard/all-blood-donation-request",
-    adminOnly: true,
+    roles: ["admin", "volunteer"],
     icon: (
       <svg
         xmlns="http://www.w3.org/2000/svg"
@@ -259,9 +259,19 @@ export default function DashboardLayout({ children }) {
           </p>
 
           {menuItems
-            .filter(
-              (item) => !item.adminOnly || session?.user?.role === "admin",
-            )
+            .filter((item) => {
+              const role = session?.user?.role;
+
+              if (item.roles) {
+                return item.roles.includes(role);
+              }
+
+              if (item.adminOnly) {
+                return role === "admin";
+              }
+
+              return true;
+            })
             .map((item) => {
               const isActive =
                 item.href === "/dashboard"
