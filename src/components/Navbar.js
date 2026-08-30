@@ -15,47 +15,49 @@ export default function Navbar() {
   const { data: session, isPending: loading } = authClient.useSession();
   const [profileName, setProfileName] = useState("");
   const [profileUpdated, setProfileUpdated] = useState(0);
+  const [profileImage, setProfileImage] = useState("");
 
-useEffect(() => {
-  if (!session?.user) return;
+  useEffect(() => {
+    if (!session?.user) return;
 
-  const loadProfileName = async () => {
-    try {
-      const tokenResult = await authClient.token();
+    const loadProfileName = async () => {
+      try {
+        const tokenResult = await authClient.token();
 
-      if (!tokenResult.data?.token) return;
+        if (!tokenResult.data?.token) return;
 
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/profile`,
-        {
-          headers: {
-            Authorization: `Bearer ${tokenResult.data.token}`,
+        const response = await fetch(
+          `${process.env.NEXT_PUBLIC_API_URL}/profile`,
+          {
+            headers: {
+              Authorization: `Bearer ${tokenResult.data.token}`,
+            },
           },
-        },
-      );
+        );
 
-      const data = await response.json();
+        const data = await response.json();
 
-      if (response.ok && data.name) {
-        setProfileName(data.name);
+        if (response.ok && data.name) {
+          setProfileName(data.name);
+          setProfileImage(data.image || "");
+        }
+      } catch (error) {
+        console.error("Navbar profile fetch error:", error);
       }
-    } catch (error) {
-      console.error("Navbar profile fetch error:", error);
-    }
-  };
+    };
 
-  loadProfileName();
-
-  const handleProfileUpdate = () => {
     loadProfileName();
-  };
 
-  window.addEventListener("profile-updated", handleProfileUpdate);
+    const handleProfileUpdate = () => {
+      loadProfileName();
+    };
 
-  return () => {
-    window.removeEventListener("profile-updated", handleProfileUpdate);
-  };
-}, [session]);
+    window.addEventListener("profile-updated", handleProfileUpdate);
+
+    return () => {
+      window.removeEventListener("profile-updated", handleProfileUpdate);
+    };
+  }, [session]);
 
   // console.log("NAVBAR SESSION:", session);
   // console.log("NAVBAR RENDER USER:", session?.user?.name);
@@ -193,9 +195,9 @@ useEffect(() => {
 
   // Logged in user
   const user = session.user;
-  
+
   const displayName = profileName || user.name || "User";
- // console.log("NAVBAR DISPLAY NAME:", displayName);
+  // console.log("NAVBAR DISPLAY NAME:", displayName);
 
   return (
     <nav className="border-b border-gray-200 bg-white px-4 py-3 sm:px-6">
@@ -282,9 +284,17 @@ useEffect(() => {
             <button
               type="button"
               onClick={() => setIsMenuOpen((prev) => !prev)}
-              className="flex h-10 w-10 items-center justify-center rounded-full bg-red-500 text-sm font-bold text-white hover:bg-red-600"
+              className="flex h-10 w-10 items-center justify-center overflow-hidden rounded-full bg-red-500 text-sm font-bold text-white hover:bg-red-600"
             >
-              {getInitials(displayName)}
+              {profileImage ? (
+                <img
+                  src={profileImage}
+                  alt={displayName}
+                  className="h-full w-full object-cover"
+                />
+              ) : (
+                getInitials(displayName)
+              )}
             </button>
 
             {isMenuOpen && (
@@ -302,8 +312,16 @@ useEffect(() => {
                   {/* User info */}
                   <div className="border-b border-gray-100 px-4 py-4">
                     <div className="flex items-center gap-3">
-                      <div className="flex h-11 w-11 items-center justify-center rounded-full bg-red-500 text-sm font-bold text-white">
-                        {getInitials(displayName)}
+                      <div className="flex h-11 w-11 shrink-0 items-center justify-center overflow-hidden rounded-full bg-red-500 text-sm font-bold text-white">
+                        {profileImage ? (
+                          <img
+                            src={profileImage}
+                            alt={displayName}
+                            className="h-full w-full object-cover"
+                          />
+                        ) : (
+                          getInitials(displayName)
+                        )}
                       </div>
 
                       <div className="min-w-0">

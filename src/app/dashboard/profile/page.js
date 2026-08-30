@@ -31,6 +31,7 @@ export default function ProfilePage() {
     name: "",
     email: "",
     image: "",
+    imageFile: null,
     bloodGroup: "",
     district: "",
     upazila: "",
@@ -56,7 +57,7 @@ export default function ProfilePage() {
     return districtOptions.find(
       (district) =>
         district.name === formData.district ||
-        district.id === formData.district,
+        String(district.id) === String(formData.district),
     );
   }, [districtOptions, formData.district]);
 
@@ -88,11 +89,6 @@ export default function ProfilePage() {
         return;
       }
 
-      // =========================
-      // API: GET PROFILE
-      // =========================
-      console.log("PROFILE API URL:", `${API_URL}/profile`);
-
       const response = await fetch(`${API_URL}/profile`, {
         method: "GET",
         headers: {
@@ -116,7 +112,11 @@ export default function ProfilePage() {
       };
 
       setProfile(profileData);
-      setFormData(profileData);
+
+      setFormData({
+        ...profileData,
+        imageFile: null,
+      });
     } catch (error) {
       console.error("Get profile error:", error);
 
@@ -169,11 +169,74 @@ export default function ProfilePage() {
   };
 
   // =========================
+  // HANDLE IMAGE CHANGE
+  // =========================
+
+  const handleImageChange = (event) => {
+    const file = event.target.files?.[0];
+
+    if (!file) return;
+
+    // Allowed image types
+    if (!["image/png", "image/jpeg", "image/jpg"].includes(file.type)) {
+      toast.error("Only PNG and JPG images are allowed");
+
+      // Reset file input
+      event.target.value = "";
+      return;
+    }
+
+    // Maximum 5MB
+    if (file.size > 5 * 1024 * 1024) {
+      toast.error("Profile photo must be less than 5MB");
+
+      // Reset file input
+      event.target.value = "";
+      return;
+    }
+
+    setFormData((prev) => ({
+      ...prev,
+      imageFile: file,
+    }));
+  };
+
+  // =========================
+  // UPLOAD IMAGE TO IMGBB
+  // =========================
+
+  const uploadImageToImgBB = async (file) => {
+    const imageFormData = new FormData();
+
+    imageFormData.append("image", file);
+
+    const response = await fetch(
+      `https://api.imgbb.com/1/upload?key=${process.env.NEXT_PUBLIC_IMGBB_API_KEY}`,
+      {
+        method: "POST",
+        body: imageFormData,
+      },
+    );
+
+    const data = await response.json();
+
+    if (!response.ok || !data.success) {
+      throw new Error("Failed to upload profile photo");
+    }
+
+    return data.data.url;
+  };
+
+  // =========================
   // EDIT PROFILE
   // =========================
 
   const handleEdit = () => {
-    setFormData(profile);
+    setFormData({
+      ...profile,
+      imageFile: null,
+    });
+
     setEditing(true);
   };
 
@@ -182,7 +245,11 @@ export default function ProfilePage() {
   // =========================
 
   const handleCancel = () => {
-    setFormData(profile);
+    setFormData({
+      ...profile,
+      imageFile: null,
+    });
+
     setEditing(false);
   };
 
@@ -216,6 +283,10 @@ export default function ProfilePage() {
     try {
       setSaving(true);
 
+      // =========================
+      // GET AUTH TOKEN
+      // =========================
+
       const { data: tokenData, error: tokenError } = await authClient.token();
 
       if (tokenError || !tokenData?.token) {
@@ -225,7 +296,27 @@ export default function ProfilePage() {
       }
 
       // =========================
-      // API: UPDATE PROFILE
+      // IMAGE URL
+      // =========================
+
+      // Keep old image by default
+      let imageUrl = formData.image || "";
+
+      // Upload only if user selected a new image
+      if (formData.imageFile) {
+        toast.loading("Uploading profile photo...", {
+          id: "profile-image-upload",
+        });
+
+        imageUrl = await uploadImageToImgBB(formData.imageFile);
+
+        toast.success("Profile photo uploaded", {
+          id: "profile-image-upload",
+        });
+      }
+
+      // =========================
+      // UPDATE PROFILE API
       // =========================
 
       const response = await fetch(`${API_URL}/profile`, {
@@ -239,7 +330,7 @@ export default function ProfilePage() {
           bloodGroup: formData.bloodGroup,
           district: formData.district,
           upazila: formData.upazila,
-          image: formData.image.trim(),
+          image: imageUrl,
         }),
       });
 
@@ -256,7 +347,12 @@ export default function ProfilePage() {
       }
 
       const updatedUser = data.user;
+
       console.log("UPDATED USER:", updatedUser);
+
+      // =========================
+      // UPDATED PROFILE DATA
+      // =========================
 
       const updatedProfile = {
         name: updatedUser.name || "",
@@ -268,16 +364,23 @@ export default function ProfilePage() {
       };
 
       setProfile(updatedProfile);
-      setFormData(updatedProfile);
-      window.dispatchEvent(new Event("profile-updated"));
-      
 
-      // Return to initial non-editable state
+      setFormData({
+        ...updatedProfile,
+        imageFile: null,
+      });
+
+      // Notify Navbar
+      window.dispatchEvent(new Event("profile-updated"));
+
+      // Return to non-edit mode
       setEditing(false);
 
       toast.success("Profile updated successfully");
     } catch (error) {
       console.error("Update profile error:", error);
+
+      toast.dismiss("profile-image-upload");
 
       toast.error(error.message || "Failed to update profile");
     } finally {
@@ -578,29 +681,78 @@ export default function ProfilePage() {
                 </select>
               </div>
 
-              {/* Avatar URL */}
+              {/* Profile Photo */}
               <div>
-                <label
-                  htmlFor="image"
-                  className="mb-2 block text-sm font-semibold text-gray-700"
-                >
-                  Avatar URL
+                <label className="mb-2 block text-sm font-semibold text-gray-700">
+                  Profile Photo
                 </label>
 
-                <input
-                  id="image"
-                  name="image"
-                  type="url"
-                  value={formData.image}
-                  onChange={handleChange}
-                  disabled={!editing || saving}
-                  className={`w-full rounded-xl border px-4 py-3 text-sm outline-none transition ${
-                    editing
-                      ? "border-gray-300 bg-white text-gray-900 focus:border-red-400 focus:ring-2 focus:ring-red-100"
-                      : "cursor-not-allowed border-gray-200 bg-gray-50 text-gray-600"
-                  }`}
-                  placeholder="https://example.com/avatar.jpg"
-                />
+                {editing ? (
+                  <label className="block cursor-pointer rounded-2xl border-2 border-dashed border-gray-200 bg-white p-6 text-center transition hover:border-red-300">
+                    <div className="flex flex-col items-center justify-center">
+                      <div className="mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-gray-50 text-slate-400">
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          className="h-6 w-6"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke="currentColor"
+                          strokeWidth="1.8"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"
+                          />
+                        </svg>
+                      </div>
+
+                      <p className="text-sm font-semibold text-slate-700">
+                        {formData.imageFile
+                          ? formData.imageFile.name
+                          : "Click to upload a new photo"}
+                      </p>
+
+                      <p className="mt-1 text-xs text-slate-400">
+                        PNG, JPG up to 5MB
+                      </p>
+                    </div>
+
+                    <input
+                      type="file"
+                      accept="image/png,image/jpeg,image/jpg"
+                      onChange={handleImageChange}
+                      disabled={saving}
+                      className="hidden"
+                    />
+                  </label>
+                ) : (
+                  <div className="flex items-center gap-4 rounded-xl border border-gray-200 bg-gray-50 px-4 py-3">
+                    <div className="h-12 w-12 shrink-0 overflow-hidden rounded-full bg-red-100">
+                      {profile.image ? (
+                        <img
+                          src={profile.image}
+                          alt={profile.name || "Profile"}
+                          className="h-full w-full object-cover"
+                        />
+                      ) : (
+                        <div className="flex h-full w-full items-center justify-center font-bold text-red-500">
+                          {profile.name?.charAt(0)?.toUpperCase() || "U"}
+                        </div>
+                      )}
+                    </div>
+
+                    <div>
+                      <p className="text-sm font-semibold text-gray-700">
+                        Profile Photo
+                      </p>
+
+                      <p className="text-xs text-gray-400">
+                        Click Edit Profile to change your photo
+                      </p>
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
 

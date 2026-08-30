@@ -97,23 +97,9 @@ export default function LoginPage() {
           </p>
         </div>
 
-        {/* Role Selection */}
-        <div className="mb-6 flex items-center rounded-2xl bg-gray-100 p-1.5">
-          {["donor", "volunteer", "admin"].map((role) => (
-            <button
-              key={role}
-              type="button"
-              onClick={() => setSelectedRole(role)}
-              className={`flex-1 rounded-xl py-2 text-sm font-semibold capitalize transition-all ${
-                selectedRole === role
-                  ? "bg-white text-slate-800 shadow-sm"
-                  : "text-slate-500 hover:text-slate-800"
-              }`}
-            >
-              {role}
-            </button>
-          ))}
-        </div>
+        
+        
+        
 
         <form onSubmit={handleSubmit} className="space-y-5">
           {/* Email */}

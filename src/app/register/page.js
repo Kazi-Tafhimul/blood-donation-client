@@ -74,6 +74,27 @@ export default function RegisterPage() {
       photo: file,
     }));
   };
+  const uploadImageToImgBB = async (file) => {
+    const formData = new FormData();
+
+    formData.append("image", file);
+
+    const response = await fetch(
+      `https://api.imgbb.com/1/upload?key=${process.env.NEXT_PUBLIC_IMGBB_API_KEY}`,
+      {
+        method: "POST",
+        body: formData,
+      },
+    );
+
+    const data = await response.json();
+
+    if (!data.success) {
+      throw new Error("Failed to upload profile photo");
+    }
+
+    return data.data.url;
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -120,6 +141,11 @@ export default function RegisterPage() {
     }
 
     try {
+      let photoUrl = "";
+
+      if (formData.photo) {
+        photoUrl = await uploadImageToImgBB(formData.photo);
+      }
       const { data, error } = await authClient.signUp.email({
         name: formData.name,
         email: formData.email,
@@ -127,6 +153,7 @@ export default function RegisterPage() {
         bloodGroup: formData.bloodGroup,
         district: formData.district,
         upazila: formData.upazila,
+        image: photoUrl,
       });
 
       if (error) {

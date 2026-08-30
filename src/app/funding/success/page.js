@@ -6,6 +6,7 @@ import { useSearchParams } from "next/navigation";
 import toast from "react-hot-toast";
 
 import { authClient } from "@/lib/auth-client";
+import { IoMdCloudDone } from "react-icons/io";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
@@ -107,7 +108,7 @@ export default function FundingSuccessPage() {
     <div className="flex min-h-screen items-center justify-center bg-slate-50 p-4">
       <div className="w-full max-w-md rounded-3xl border border-slate-200 bg-white p-8 text-center shadow-sm">
         <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-emerald-100 text-3xl">
-          ✓
+          <IoMdCloudDone/>
         </div>
 
         <h1 className="mt-5 text-2xl font-bold text-slate-900">

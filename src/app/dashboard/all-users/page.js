@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { authClient } from "@/lib/auth-client";
 import toast from "react-hot-toast";
+import { FaUserCircle } from "react-icons/fa";
 
 export default function AllUsersPage() {
   const router = useRouter();
@@ -241,7 +242,7 @@ export default function AllUsersPage() {
             </div>
           ) : users.length === 0 ? (
             <div className="p-12 text-center">
-              <div className="text-4xl">👥</div>
+              <div className="text-4xl"><FaUserCircle/></div>
 
               <h2 className="mt-4 font-semibold text-slate-800">
                 No users found

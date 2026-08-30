@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 
 import { authClient } from "@/lib/auth-client";
+import { TbMoneybagHeart } from "react-icons/tb";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
@@ -145,7 +146,8 @@ export default function FundingPage() {
         ) : fundings.length === 0 ? (
           <div className="px-6 py-16 text-center">
             <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-emerald-50 text-2xl">
-              💰
+              <TbMoneybagHeart/>
+
             </div>
 
             <h2 className="mt-4 text-lg font-bold text-slate-900">

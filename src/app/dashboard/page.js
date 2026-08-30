@@ -5,6 +5,9 @@ import Link from "next/link";
 import toast from "react-hot-toast";
 
 import { authClient } from "@/lib/auth-client";
+import { FaUserCircle } from "react-icons/fa";
+import { TbMoneybagHeart } from "react-icons/tb";
+import { FaDroplet } from "react-icons/fa6";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
@@ -189,7 +192,7 @@ export default function DashboardPage() {
           </div>
 
           <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl bg-white/15 text-3xl backdrop-blur-sm">
-            🩸
+            <FaDroplet/>
           </div>
         </div>
       </section>
@@ -241,7 +244,7 @@ export default function DashboardPage() {
                   </div>
 
                   <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-red-50 text-2xl">
-                    👥
+                    <FaUserCircle/>
                   </div>
                 </div>
               </div>
@@ -264,7 +267,8 @@ export default function DashboardPage() {
                   </div>
 
                   <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-emerald-50 text-2xl">
-                    💰
+                    <TbMoneybagHeart/>
+
                   </div>
                 </div>
               </div>
@@ -287,7 +291,7 @@ export default function DashboardPage() {
                   </div>
 
                   <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-blue-50 text-2xl">
-                    🩸
+                    <FaDroplet/>
                   </div>
                 </div>
               </div>
@@ -333,7 +337,7 @@ export default function DashboardPage() {
           ) : recentRequests.length === 0 ? (
             <div className="rounded-2xl border border-slate-200 bg-white px-6 py-14 text-center shadow-sm">
               <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-red-50 text-2xl">
-                🩸
+                <FaDroplet/>
               </div>
 
               <h3 className="mt-4 text-lg font-bold text-slate-900">
