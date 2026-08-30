@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import districts from "@/data/districts.json";
 import upazilas from "@/data/upazilas.json";
 import { authClient } from "@/lib/auth-client";
+import toast from "react-hot-toast";
 
 export default function CreateDonationRequestPage() {
   const router = useRouter();
@@ -127,7 +128,7 @@ export default function CreateDonationRequestPage() {
       const data = await response.json();
 
       if (!response.ok) {
-        alert(data.message || "Failed to create donation request.");
+       toast.error("Your account is blocked. You cannot create donation requests.")
         return;
       }
 

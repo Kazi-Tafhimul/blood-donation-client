@@ -4,6 +4,7 @@ import { useState } from "react";
 import districts from "@/data/districts.json";
 import upazilas from "@/data/upazilas.json";
 import { authClient } from "@/lib/auth-client";
+import toast from "react-hot-toast";
 
 export default function CreateDonationRequestPage() {
   const { data: session, isPending } = authClient.useSession();
@@ -109,7 +110,7 @@ export default function CreateDonationRequestPage() {
 
       if (!response.ok) {
         console.error("Donation request failed:", data);
-        alert(data.message || "Failed to create donation request.");
+        toast.error("Your account is blocked. You cannot create donation requests.")
         return;
       }
 
