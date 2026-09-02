@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import toast from "react-hot-toast";
 
@@ -10,7 +10,7 @@ import { IoMdCloudDone } from "react-icons/io";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
-export default function FundingSuccessPage() {
+function FundingSuccessContent() {
   const searchParams = useSearchParams();
   const sessionId = searchParams.get("session_id");
 
@@ -53,7 +53,7 @@ export default function FundingSuccessPage() {
       } catch (error) {
         console.error("Payment verification error:", error);
 
-        toast.error(error.message || "Failed to verify payment");
+        toast.error(error?.message || "Failed to verify payment");
       } finally {
         setLoading(false);
       }
@@ -108,7 +108,7 @@ export default function FundingSuccessPage() {
     <div className="flex min-h-screen items-center justify-center bg-slate-50 p-4">
       <div className="w-full max-w-md rounded-3xl border border-slate-200 bg-white p-8 text-center shadow-sm">
         <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-emerald-100 text-3xl">
-          <IoMdCloudDone/>
+          <IoMdCloudDone />
         </div>
 
         <h1 className="mt-5 text-2xl font-bold text-slate-900">
@@ -128,5 +128,21 @@ export default function FundingSuccessPage() {
         </Link>
       </div>
     </div>
+  );
+}
+
+export default function FundingSuccessPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="flex min-h-screen items-center justify-center bg-slate-50">
+          <p className="text-sm font-medium text-slate-600">
+            Verifying your payment...
+          </p>
+        </div>
+      }
+    >
+      <FundingSuccessContent />
+    </Suspense>
   );
 }
