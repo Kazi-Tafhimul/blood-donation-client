@@ -199,7 +199,7 @@ export default function RegisterPage() {
                 name="name"
                 value={formData.name}
                 onChange={handleChange}
-                placeholder="Arjun Chowdhury"
+                placeholder=""
                 className="w-full rounded-xl border border-gray-200 bg-gray-50/50 px-4 py-3 text-slate-700 outline-none placeholder:text-slate-400 focus:border-red-400"
               />
 
@@ -218,7 +218,7 @@ export default function RegisterPage() {
                 name="email"
                 value={formData.email}
                 onChange={handleChange}
-                placeholder="arjun@email.com"
+                placeholder=""
                 className="w-full rounded-xl border border-gray-200 bg-gray-50/50 px-4 py-3 text-slate-700 outline-none placeholder:text-slate-400 focus:border-red-400"
               />
 
