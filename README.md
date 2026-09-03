@@ -1,36 +1,116 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# 🩸 Blood Donation Application
 
-## Getting Started
+A full-stack blood donation management platform that connects blood donors with people in need and provides role-based management for donors, volunteers, and admins.
 
-First, run the development server:
+## 🌐 Live Demo
+
+**Frontend:** https://blood-donation-client-nu-one.vercel.app/
+
+**Backend:** https://blood-donation-server-sigma-dusky.vercel.app/
+
+## ✨ Features
+
+* Email/Password & Google Authentication
+* Role-based access: Donor, Volunteer & Admin
+* Create and manage blood donation requests
+* Search donors by blood group, district and upazila
+* Donation request status management
+* Admin user & request management
+* Volunteer request management
+* Stripe funding system
+* Responsive dashboard and UI
+* Image upload with ImageBB
+
+## 🛠️ Tech Stack
+
+**Frontend:** Next.js, React, Tailwind CSS, HeroUI
+
+**Backend:** Node.js, Express.js, MongoDB
+
+**Authentication:** Better Auth, Google OAuth, JWT
+
+**Payment:** Stripe
+
+**Deployment:** Vercel, MongoDB Atlas
+
+## 🚀 Run Locally
+
+### Client
 
 ```bash
+cd client
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### Server
 
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
+```bash
+cd server
+npm install
+npm start
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Create the required environment variables in `.env.local` for the client and `.env` for the server.
 
-## Learn More
+## 👨‍💻 Author
 
-To learn more about Next.js, take a look at the following resources:
+**Tafhimul**
+# 🩸 Blood Donation Application
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+A full-stack blood donation management platform that connects blood donors with people in need and provides role-based management for donors, volunteers, and admins.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## 🌐 Live Demo
 
-## Deploy on Vercel
+**Frontend:** https://blood-donation-client-nu-one.vercel.app/
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+**Backend:** https://blood-donation-server-sigma-dusky.vercel.app/
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## ✨ Features
+
+* Email/Password & Google Authentication
+* Role-based access: Donor, Volunteer & Admin
+* Create and manage blood donation requests
+* Search donors by blood group, district and upazila
+* Donation request status management
+* Admin user & request management
+* Volunteer request management
+* Stripe funding system
+* Responsive dashboard and UI
+* Image upload with ImageBB
+
+## 🛠️ Tech Stack
+
+**Frontend:** Next.js, React, Tailwind CSS, HeroUI
+
+**Backend:** Node.js, Express.js, MongoDB
+
+**Authentication:** Better Auth, Google OAuth, JWT
+
+**Payment:** Stripe
+
+**Deployment:** Vercel, MongoDB Atlas
+
+## 🚀 Run Locally
+
+### Client
+
+```bash
+cd client
+npm install
+npm run dev
+```
+
+### Server
+
+```bash
+cd server
+npm install
+npm start
+```
+
+Create the required environment variables in `.env.local` for the client and `.env` for the server.
+
+## 👨‍💻 Author
+
+**Tafhimul**
